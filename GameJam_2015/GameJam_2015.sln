@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{BECA0FC6-D5F9-4908-819B-5136A3A7E73A}") = "GameJam_2015", "GameJam_2015.vcxproj", "{E8FD3C25-26FB-4253-AD2B-9EB16C739BDD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Android|Win32 = Android|Win32
+		Debug|Win32 = Debug|Win32
+		PS3|Win32 = PS3|Win32
+		PSP|Win32 = PSP|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E8FD3C25-26FB-4253-AD2B-9EB16C739BDD}.Android|Win32.ActiveCfg = Android|Win32
+		{E8FD3C25-26FB-4253-AD2B-9EB16C739BDD}.Android|Win32.Build.0 = Android|Win32
+		{E8FD3C25-26FB-4253-AD2B-9EB16C739BDD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E8FD3C25-26FB-4253-AD2B-9EB16C739BDD}.Debug|Win32.Build.0 = Debug|Win32
+		{E8FD3C25-26FB-4253-AD2B-9EB16C739BDD}.PS3|Win32.ActiveCfg = PS3|Win32
+		{E8FD3C25-26FB-4253-AD2B-9EB16C739BDD}.PS3|Win32.Build.0 = PS3|Win32
+		{E8FD3C25-26FB-4253-AD2B-9EB16C739BDD}.PSP|Win32.ActiveCfg = PSP|Win32
+		{E8FD3C25-26FB-4253-AD2B-9EB16C739BDD}.PSP|Win32.Build.0 = PSP|Win32
+		{E8FD3C25-26FB-4253-AD2B-9EB16C739BDD}.Release|Win32.ActiveCfg = Release|Win32
+		{E8FD3C25-26FB-4253-AD2B-9EB16C739BDD}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
