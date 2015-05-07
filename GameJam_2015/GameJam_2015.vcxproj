@@ -116,6 +116,12 @@
     </ClCompile>
     <ClCompile Include="..\..\main\lib\flib\flib_vec2.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="NotVoid.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Display.h" />
+    <ClInclude Include="Header.h" />
+    <ClInclude Include="NotVoid.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
