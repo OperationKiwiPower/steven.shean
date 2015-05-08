@@ -6,7 +6,6 @@
 
 const int g_iNumber = 0;
 
-
 void Display()
 {
 	g_tDisplay.X.iFull = GfxGetDisplaySizeX();
@@ -51,17 +50,19 @@ void Controller(const int iPlayer)
 	float fJoystickRightY = (-1 * GfxInputGetPadStickRightY(iPlayer));
 
 	g_tMouvement[iPlayer] = TGfxVec2(fJoystickLeftX, fJoystickLeftY) * g_tPlayer[iPlayer].fSpeed;
-
+	GfxDbgPrintf("%f---%f\n", g_tMouvement[iPlayer].x, g_tMouvement[iPlayer].y);
 	if (fJoystickRightX != 0 && fJoystickRightY != 0)
 	{
 		g_tDirection[iPlayer] = TGfxVec2(fJoystickRightX, fJoystickRightY).Normalize()* g_tPlayer[iPlayer].fSpeed * 2;
 	}
-	if (GfxInputIsJustPressed(EGfxInputID_360PadShoulderR))
-	{
-		g_tPlayer[iPlayer].tAmmoDepl[g_tPlayer[iPlayer].iAmmoNow] = g_tDirection[iPlayer] * 10;
-		g_tPlayer[iPlayer].iAmmoNow++;
 
-		if (g_tPlayer[iPlayer].iAmmoNow <= g_iNumberAmmo)
+	if (GfxInputIsPressed(EGfxInputID_360PadShoulderR,iPlayer))
+	{
+		g_tPlayer[iPlayer].tAmmoPositionInitial[g_tPlayer[iPlayer].iAmmoNow] = g_tPlayer[iPlayer].tPosition;
+		g_tPlayer[iPlayer].tAmmoDepl[g_tPlayer[iPlayer].iAmmoNow] = g_tDirection[iPlayer];
+		g_tPlayer[iPlayer].iAmmoNow ++;
+
+		if (g_tPlayer[iPlayer].iAmmoNow >= g_iNumberAmmo)
 		{
 			g_tPlayer[iPlayer].iAmmoNow = 0;
 		}
@@ -78,7 +79,13 @@ void Controller(const int iPlayer)
 	{
 		fAngle = -1 * (GfxMathRadToDeg(acos(g_tDirection[iPlayer].x / hypothenuse)));
 	}
-	g_tPlayer[iPlayer].tPosition += g_tMouvement[iPlayer];
+	if (g_tMouvement[iPlayer].x >= 0 &&
+		g_tMouvement[iPlayer].y >= 0 &&
+		g_tMouvement[iPlayer].x <= g_tDisplay.X.iFull &&
+		g_tMouvement[iPlayer].x <= g_tDisplay.Y.iFull)
+	{
+		g_tPlayer[iPlayer].tPosition += g_tMouvement[iPlayer];
+	}
 
 	GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteArrow, g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
 	GfxSpriteSetAngle(g_tPlayer[iPlayer].pSpriteArrow, GfxMathDegToRad(fAngle));
@@ -88,11 +95,12 @@ void Controller(const int iPlayer)
 }
 void SpriteVsEvol(const int iPlayer)
 {
-	for (int i = 0; i < g_iNumberAmmo; i++)
+	for (int j = 0; j < g_iNumberAmmo; j++)
 	{
-		GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteAmmo[i], g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
+		g_tPlayer[iPlayer].tAmmoPositionInitial[j].y += g_tPlayer[iPlayer].tAmmoDepl[j].y;
+		g_tPlayer[iPlayer].tAmmoPositionInitial[j].x += g_tPlayer[iPlayer].tAmmoDepl[j].x;
+		GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteAmmo[j], g_tPlayer[iPlayer].tAmmoPositionInitial[j].x, g_tPlayer[iPlayer].tAmmoPositionInitial[j].y);
 	}
-
 	switch (g_tEvol[iPlayer].m_tEvolution)
 	{
 	case EStateEvol_1:
@@ -174,10 +182,11 @@ void Initialize()
 	g_tTexture.pTexture_Ammo = CreateTexture("ammo.tga");
 
 
-
 	Display();
 	for (int i = 0; i < g_iNumberPlayer; ++i)
 	{
+		g_tPlayer[i].tAmmoDepl[i] = TGfxVec2(0, 0);
+		g_tPlayer[i].tAmmoPositionInitial[g_tPlayer[i].iAmmoNow]= TGfxVec2(0, 0);
 		g_tEvol[i].m_tEvolution = EStateEvol_1;
 		SetInitialPlayer(i);
 		g_tPlayer[i].tPosition.x = g_tPlayer[i].tPositionInitial.x;
@@ -227,12 +236,6 @@ void Update()
 
 	for (int i = 0; i < g_iNumberPlayerInGame; i++)
 	{
-		//TGfxVec2 tMouvement = TGfxVec2(g_tPlayer[i].tPosition - g_tMousse.tMousse).Normalize() * g_tPlayer[i].fSpeed;
-		//g_tPlayer[i].tPosition -= tMouvement;
-		//if (g_tPlayer[i].tPosition != g_tMousse.tMousse)
-		//{
-		//	g_tPlayer[i].pSprite = DrawLine(g_tPlayer[i].pSprite, g_tPlayer[i].tPosition, g_tPlayer[i].fRatio);
-		//}
 		Controller(i);
 	}
 
@@ -244,7 +247,7 @@ void Render()
 	{
 		for (int j = 0; j < g_iNumberAmmo; j++)
 		{
-			GfxSpriteRender(g_tPlayer[i].pSpriteAmmo[j]);
+		GfxSpriteRender(g_tPlayer[i].pSpriteAmmo[j]);
 		}
 		GfxSpriteRender(g_tPlayer[i].pSpriteArrow);
 		RenderVsEvol(i);
