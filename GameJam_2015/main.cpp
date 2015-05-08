@@ -18,11 +18,11 @@ void checkEnnemyCollision(const int iPlayer)
 				g_tEnnemy[i].tPosition.y + 8 >= g_tPlayer[iPlayer].tAmmoPositionInitial[j].y)
 			{
 				g_tEnnemy[i].pSprite = nullptr;
+				g_tPlayer[i].iScore++;
 			}
 		}
 	}
 }
-
 void Display()
 {
 	g_tDisplay.X.iFull = GfxGetDisplaySizeX();
@@ -186,10 +186,16 @@ void RenderVsEvol(const int iPlayer)
 		break;
 	}
 }
+void setScoring()
+{
+	for (int i = 0; i < g_iNumberPlayer; i++)
+	{
+		GfxTextSpritePrintf(g_tText.pScore[i],"Score:%i",g_tPlayer[i].iScore);
+	}
+}
 
 void Initialize()
 {
-
 	g_tTexture.pTexture_16 = CreateTexture("fairy_16.tga");
 	g_tTexture.pTexture_32 = CreateTexture("fairy_32.tga");
 	g_tTexture.pTexture_64 = CreateTexture("fairy_64.tga");
@@ -207,6 +213,8 @@ void Initialize()
 	}
 	for (int i = 0; i < g_iNumberPlayer; ++i)
 	{
+		g_tText.pScore[i] = GfxTextSpriteCreate();
+		GfxSpriteSetFilteringEnabled(g_tText.pScore[i], false);
 		g_tPlayer[i].tAmmoDepl[i] = TGfxVec2(0, 0);
 		g_tPlayer[i].tAmmoPositionInitial[g_tPlayer[i].iAmmoNow]= TGfxVec2(0, 0);
 		g_tEvol[i].m_tEvolution = EStateEvol_1;
@@ -232,6 +240,7 @@ void Initialize()
 }
 void Update()
 {
+	setScoring();
 	g_iCounter++;
 	for (int i = 0; i < g_iNumberPlayer; i++)
 	{
@@ -286,6 +295,7 @@ void Render()
 		}
 		GfxSpriteRender(g_tPlayer[i].pSpriteArrow);
 		RenderVsEvol(i);
+		GfxTextSpriteRender(g_tText.pScore[i], 16.0f,float((i+1)*32),EGfxColor_White,2.0f,false,true);
 	}
 }
 

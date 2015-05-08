@@ -37,7 +37,7 @@ struct TSprite
 	TGfxVec2 tAmmoPositionInitial[g_iNumberAmmo];
 	TGfxVec2 tAmmoDepl[g_iNumberAmmo];
 	int iAmmoNow = 0;
-
+	int iScore = 0;
 	float fSpeed = 3.0f;
 	float fRatio = 10;
 	int iFrame = 0;
@@ -57,6 +57,10 @@ struct TTexture
 	TGfxTexture * pTexture_Arrow;
 	TGfxTexture * pTexture_Ammo;
 	TGfxTexture * pTexture_Ennemy;
+};
+struct TText
+{
+	TGfxSprite * pScore[g_iNumberEnnemy];
 };
 struct TDisplay
 {
@@ -79,6 +83,7 @@ TState g_tEvol[g_iNumberPlayer];
 TSprite g_tPlayer[g_iNumberPlayer];
 TEnnemy g_tEnnemy[g_iNumberEnnemy];
 TTexture g_tTexture;
+TText g_tText;
 TDisplay g_tDisplay;
 TMousse g_tMousse;
 TMousse g_tCOntroller[g_iNumberPlayer];
