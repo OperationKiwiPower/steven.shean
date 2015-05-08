@@ -2,7 +2,8 @@
 #define HEADER_LUCIOL
 
 const int g_iNumberPlayer = 4;
-const int g_iNumberAmmo = 200;
+const int g_iNumberAmmo = 20;
+const int g_iNumberEnnemy = 50;
 
 int g_iNumberPlayerInGame = 0;
 int g_iCounter = 0;
@@ -41,6 +42,12 @@ struct TSprite
 	float fRatio = 10;
 	int iFrame = 0;
 };
+struct TEnnemy
+{
+	TGfxSprite * pSprite;
+	TGfxVec2 tPosition;
+	bool bActif = false;
+};
 struct TTexture
 {
 	TGfxTexture * pTexture_16;
@@ -49,6 +56,7 @@ struct TTexture
 	TGfxTexture * pTexture_128;
 	TGfxTexture * pTexture_Arrow;
 	TGfxTexture * pTexture_Ammo;
+	TGfxTexture * pTexture_Ennemy;
 };
 struct TDisplay
 {
@@ -69,6 +77,7 @@ struct TMousse
 
 TState g_tEvol[g_iNumberPlayer];
 TSprite g_tPlayer[g_iNumberPlayer];
+TEnnemy g_tEnnemy[g_iNumberEnnemy];
 TTexture g_tTexture;
 TDisplay g_tDisplay;
 TMousse g_tMousse;

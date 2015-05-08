@@ -6,6 +6,23 @@
 
 const int g_iNumber = 0;
 
+void checkEnnemyCollision(const int iPlayer)
+{
+	for (int i = 0; i < g_iNumberEnnemy; i++)
+	{
+		for (int j = 0; j < g_iNumberAmmo; j++)
+		{
+			if (g_tEnnemy[i].tPosition.x - 8 <= g_tPlayer[iPlayer].tAmmoPositionInitial[j].x &&
+				g_tEnnemy[i].tPosition.x + 8 >= g_tPlayer[iPlayer].tAmmoPositionInitial[j].x &&
+				g_tEnnemy[i].tPosition.y - 8 <= g_tPlayer[iPlayer].tAmmoPositionInitial[j].y &&
+				g_tEnnemy[i].tPosition.y + 8 >= g_tPlayer[iPlayer].tAmmoPositionInitial[j].y)
+			{
+				g_tEnnemy[i].pSprite = nullptr;
+			}
+		}
+	}
+}
+
 void Display()
 {
 	g_tDisplay.X.iFull = GfxGetDisplaySizeX();
@@ -43,20 +60,18 @@ void SetInitialPlayer(const int iPlayer)
 }
 void Controller(const int iPlayer)
 {
-
 	float fJoystickLeftX = GfxInputGetPadStickLeftX(iPlayer);
 	float fJoystickLeftY = (-1 * GfxInputGetPadStickLeftY(iPlayer));
 	float fJoystickRightX = GfxInputGetPadStickRightX(iPlayer);
 	float fJoystickRightY = (-1 * GfxInputGetPadStickRightY(iPlayer));
 
 	g_tMouvement[iPlayer] = TGfxVec2(fJoystickLeftX, fJoystickLeftY) * g_tPlayer[iPlayer].fSpeed;
-	GfxDbgPrintf("%f---%f\n", g_tMouvement[iPlayer].x, g_tMouvement[iPlayer].y);
+
 	if (fJoystickRightX != 0 && fJoystickRightY != 0)
 	{
 		g_tDirection[iPlayer] = TGfxVec2(fJoystickRightX, fJoystickRightY).Normalize()* g_tPlayer[iPlayer].fSpeed * 2;
 	}
-
-	if (GfxInputIsPressed(EGfxInputID_360PadShoulderR,iPlayer))
+	if (GfxInputIsJustPressed(EGfxInputID_360PadShoulderR, iPlayer))
 	{
 		g_tPlayer[iPlayer].tAmmoPositionInitial[g_tPlayer[iPlayer].iAmmoNow] = g_tPlayer[iPlayer].tPosition;
 		g_tPlayer[iPlayer].tAmmoDepl[g_tPlayer[iPlayer].iAmmoNow] = g_tDirection[iPlayer];
@@ -79,16 +94,17 @@ void Controller(const int iPlayer)
 	{
 		fAngle = -1 * (GfxMathRadToDeg(acos(g_tDirection[iPlayer].x / hypothenuse)));
 	}
-	if (g_tMouvement[iPlayer].x >= 0 &&
-		g_tMouvement[iPlayer].y >= 0 &&
-		g_tMouvement[iPlayer].x <= g_tDisplay.X.iFull &&
-		g_tMouvement[iPlayer].x <= g_tDisplay.Y.iFull)
+	if (g_tPlayer[iPlayer].tPosition.x + g_tMouvement[iPlayer].x >= 0 &&
+		g_tPlayer[iPlayer].tPosition.y + g_tMouvement[iPlayer].y >= 0 &&
+		g_tPlayer[iPlayer].tPosition.x + g_tMouvement[iPlayer].x <= g_tDisplay.X.iFull &&
+		g_tPlayer[iPlayer].tPosition.y + g_tMouvement[iPlayer].y <= g_tDisplay.Y.iFull)
 	{
 		g_tPlayer[iPlayer].tPosition += g_tMouvement[iPlayer];
 	}
 
 	GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteArrow, g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
 	GfxSpriteSetAngle(g_tPlayer[iPlayer].pSpriteArrow, GfxMathDegToRad(fAngle));
+	GfxSpriteSetAngle(g_tPlayer[iPlayer].pSpriteAmmo[g_tPlayer[iPlayer].iAmmoNow], GfxMathDegToRad(fAngle - 45));
 
 	GfxDbgPrintf("%f\n", fAngle);
 
@@ -180,9 +196,15 @@ void Initialize()
 	g_tTexture.pTexture_128 = CreateTexture("fairy_128.tga");
 	g_tTexture.pTexture_Arrow = CreateTexture("arrow.tga");
 	g_tTexture.pTexture_Ammo = CreateTexture("ammo.tga");
-
+	g_tTexture.pTexture_Ennemy= CreateTexture("fairy_16.tga");
 
 	Display();
+	for (int i = 0; i < g_iNumberEnnemy; ++i)
+	{
+		g_tEnnemy[i].pSprite = CreateFairy(g_tTexture.pTexture_Ennemy, g_tEnnemy[i].tPosition,0,48,16,1);
+		g_tEnnemy[i].tPosition = TGfxVec2(float(GfxMathGetRandomInteger(16, g_tDisplay.X.iFull - 16)), float(GfxMathGetRandomInteger(16, g_tDisplay.Y.iFull - 16)));
+		GfxSpriteSetPosition(g_tEnnemy[i].pSprite, g_tEnnemy[i].tPosition.x, g_tEnnemy[i].tPosition.y);
+	}
 	for (int i = 0; i < g_iNumberPlayer; ++i)
 	{
 		g_tPlayer[i].tAmmoDepl[i] = TGfxVec2(0, 0);
@@ -230,8 +252,14 @@ void Update()
 		}
 
 	}
-		g_iNumberPlayerInGame = CheckPad();
-	
+	g_iNumberPlayerInGame = CheckPad();
+	for (int i = 0; i < g_iNumberPlayer; i++)
+	{
+		checkEnnemyCollision(i);
+	}
+
+
+
 	//GfxDbgPrintf("Il y a %i manette de connecté\nPosx -- %f\nPosy -- %f\n", g_iNumberPlayerInGame, g_tPlayer[0].tPosition.x, g_tPlayer[0].tPosition.y);
 
 	for (int i = 0; i < g_iNumberPlayerInGame; i++)
@@ -243,6 +271,13 @@ void Update()
 void Render()
 {
 	GfxClear(EGfxColor_Black);
+	for (int i = 0; i < g_iNumberEnnemy; i++)
+	{
+		if (g_tEnnemy[i].pSprite != nullptr)
+		{
+			GfxSpriteRender(g_tEnnemy[i].pSprite);
+		}
+	}
 	for (int i = 0; i < g_iNumberPlayerInGame; i++)
 	{
 		for (int j = 0; j < g_iNumberAmmo; j++)
@@ -257,5 +292,5 @@ void Render()
 void GfxMain(int, char *[])
 {
 	GfxCallbacks(Initialize, Update, Render);
-	GfxDefaultResolution(1500, 800);
+	//GfxDefaultResolution(1500, 800);
 }
