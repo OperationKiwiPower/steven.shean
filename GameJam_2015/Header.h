@@ -3,9 +3,12 @@
 
 const int g_iNumberPlayer = 4;
 const int g_iNumberAmmo = 20;
-const int g_iNumberEnnemy = 50;
+const int g_iNumberEnnemy = 55;
+const int g_iNumberGlow = 10;
 
+int g_iWitchChange = 0;
 int g_iNumberPlayerInGame = 0;
+int g_iNumberEnnemyRender = 0;
 int g_iCounter = 0;
 
 TGfxVec2 g_tMouvement[g_iNumberPlayer];
@@ -39,14 +42,17 @@ struct TSprite
 	int iAmmoNow = 0;
 	int iScore = 0;
 	float fSpeed = 3.0f;
-	float fRatio = 10;
+	float fRatio = 8;
 	int iFrame = 0;
 };
 struct TEnnemy
 {
-	TGfxSprite * pSprite;
+	TGfxSprite * pSprite[3];
 	TGfxVec2 tPosition;
+	TGfxVec2 tDepl;
 	bool bActif = false;
+	float fAngle = 0;
+
 };
 struct TTexture
 {
@@ -57,6 +63,7 @@ struct TTexture
 	TGfxTexture * pTexture_Arrow;
 	TGfxTexture * pTexture_Ammo;
 	TGfxTexture * pTexture_Ennemy;
+	TGfxTexture * pTexture_Glow;
 };
 struct TText
 {
@@ -78,14 +85,23 @@ struct TMousse
 {
 	TGfxVec2 tMousse;
 };
+struct TClock
+{
+	int fOld;
+	int fNew;
+	int fBetween;
+
+};
 
 TState g_tEvol[g_iNumberPlayer];
 TSprite g_tPlayer[g_iNumberPlayer];
 TEnnemy g_tEnnemy[g_iNumberEnnemy];
+TEnnemy g_tGlow[g_iNumberGlow];
 TTexture g_tTexture;
 TText g_tText;
 TDisplay g_tDisplay;
 TMousse g_tMousse;
 TMousse g_tCOntroller[g_iNumberPlayer];
+TClock g_tClock;
 
 #endif
