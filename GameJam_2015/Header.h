@@ -2,7 +2,7 @@
 #define HEADER_LUCIOL
 
 const int g_iNumberPlayer = 4;
-const int g_iNumberAmmo = 200;
+const int g_iNumberAmmo = 20;
 const int g_iNumberEnnemy = 55;
 const int g_iNumberGlow = 10;
 
