@@ -86,6 +86,7 @@ void createSprite()
 		GfxSpriteSetPosition(g_tPlayer[i].pSpriteBigAmmo, g_tPlayer[i].tBigAmmoPositionInitial.x, g_tPlayer[i].tBigAmmoPositionInitial.y);
 	}
 }
+
 void checkEnnemyCollision(const int iPlayer)
 {
 	//-----------------------------collision bullet point
@@ -241,6 +242,10 @@ void Controller(const int iPlayer)
 	float fTrigger = GfxInputGetPadTriggerLeft(iPlayer);
 	if (fTrigger > 0)
 	{
+		if (g_tPlayer[iPlayer].bActifSchield == false)
+		{
+			GfxSoundPlay(g_tSound.m_Schield);
+		}
 		g_tPlayer[iPlayer].bActifSchield = true;
 	}
 	else
@@ -256,12 +261,14 @@ void Controller(const int iPlayer)
 		(g_tPlayer[iPlayer].bActifSchield == false)&&
 		(g_tPlayer[iPlayer].iScore >= 5))
 	{
+		GfxSoundPlay(g_tSound.m_BigShoot);
 		g_tPlayer[iPlayer].tBigAmmoPositionInitial = g_tPlayer[iPlayer].tPosition;
 		g_tPlayer[iPlayer].tBigAmmoDepl = g_tDirection[iPlayer];
 		g_tPlayer[iPlayer].iScore -= 5;
 	}
 	if (GfxInputIsJustPressed(EGfxInputID_360PadShoulderR, iPlayer) && (g_tPlayer[iPlayer].bActifSchield == false))
 	{
+		GfxSoundPlay(g_tSound.m_Shoot);
 		g_tPlayer[iPlayer].tAmmoPositionInitial[g_tPlayer[iPlayer].iAmmoNow] = g_tPlayer[iPlayer].tPosition;
 		g_tPlayer[iPlayer].tAmmoDepl[g_tPlayer[iPlayer].iAmmoNow] = g_tDirection[iPlayer];
 		g_tPlayer[iPlayer].iAmmoNow++;
@@ -319,6 +326,8 @@ void SpriteVsEvol(const int iPlayer)
 		GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteEvol_1[1], g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
 		if (g_tPlayer[iPlayer].iScore >= 50)
 		{
+			GfxSoundPlay(g_tSound.m_Evol);
+
 			g_tEvol[iPlayer].m_tEvolution = EStateEvol_2;
 			g_tPlayer[iPlayer].iScore -= 50;
 			g_tPlayer[iPlayer].fRatio *= 2;
@@ -333,6 +342,8 @@ void SpriteVsEvol(const int iPlayer)
 		GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteEvol_2[1], g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
 		if ( g_tPlayer[iPlayer].iScore >= 100)
 		{
+			GfxSoundPlay(g_tSound.m_Evol);
+
 			g_tEvol[iPlayer].m_tEvolution = EStateEvol_3;
 			g_tPlayer[iPlayer].iScore -= 100;
 			g_tPlayer[iPlayer].fRatio *= 2;
@@ -347,6 +358,8 @@ void SpriteVsEvol(const int iPlayer)
 		GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteEvol_3[1], g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
 		if (g_tPlayer[iPlayer].iScore >= 150)
 		{
+			GfxSoundPlay(g_tSound.m_Evol);
+
 			g_tEvol[iPlayer].m_tEvolution = EStateEvol_4;
 			g_tPlayer[iPlayer].iScore -= 150;
 			g_tPlayer[iPlayer].fRatio *= 2;
@@ -361,6 +374,8 @@ void SpriteVsEvol(const int iPlayer)
 		GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteEvol_4[1], g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
 		if (g_tPlayer[iPlayer].iScore >= 200)
 		{
+			GfxSoundPlay(g_tSound.m_Evol);
+
 			g_tEvol[iPlayer].m_tEvolution = EStateEvol_5;
 			g_tPlayer[iPlayer].iScore -= 200;
 			g_tPlayer[iPlayer].fRatio *= 2;
@@ -374,6 +389,8 @@ void SpriteVsEvol(const int iPlayer)
 		GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteEvol_5[0], g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
 		if (g_tPlayer[iPlayer].iScore >= 250)
 		{
+			GfxSoundPlay(g_tSound.m_Evol);
+
 			g_tEvol[iPlayer].m_tEvolution = EStateEvol_1;
 			g_tPlayer[iPlayer].iScore = 0;
 			for (int i = 0; i < g_iNumberAmmo; i++)
@@ -425,6 +442,13 @@ void Initialize()
 {
 	g_tClock.fOld = GfxTimeGetMilliseconds();
 	Display();
+	g_tSound.m_Shoot = CreateSound("Wave_1.wav");
+	//g_tSound.m_Schield= CreateSound("Wave_2.wav");
+	g_tSound.m_Schield = CreateSound("Wave_3.wav");
+	g_tSound.m_BigShoot = CreateSound("Wave_4.wav");
+	//g_tSound.m_ = CreateSound("Wave_5.wav");
+	g_tSound.m_Evol = CreateSound("Wave_6.wav");
+
 	for (int i = 0; i < g_iNumberPlayer; ++i)
 	{
 		SetInitialPlayer(i);
@@ -432,7 +456,6 @@ void Initialize()
 	createSprite();
 	for (int i = 0; i < g_iNumberPlayer; ++i)
 	{
-
 		GfxSpriteSetScale(g_tPlayer[i].pSpriteScoring, 0.25f, 0.25f);
 		GfxSpriteSetFilteringEnabled(g_tText.pScore[i], false);
 		GfxSpriteSetPosition(g_tPlayer[i].pSpriteScoring, 32.0f, float (32 * (i + 1)));

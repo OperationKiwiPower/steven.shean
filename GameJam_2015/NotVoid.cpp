@@ -75,6 +75,15 @@ TGfxSprite * CreateAmmo(TGfxTexture * pTexture, TGfxVec2 tPosition, const int iT
 	return pSprite;
 }
 
+TGfxSound * CreateSound(const char *pFile)
+{
+	TGfxSound * pSound = GfxSoundLoad(pFile);
+
+
+
+	return pSound;
+}
+
 int CheckPad()
 {
 	int iCounterPad = 0;

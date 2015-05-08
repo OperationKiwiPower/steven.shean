@@ -2,7 +2,7 @@
 #define HEADER_LUCIOL
 
 const int g_iNumberPlayer = 4;
-const int g_iNumberAmmo = 20;
+const int g_iNumberAmmo = 200;
 const int g_iNumberEnnemy = 55;
 const int g_iNumberGlow = 10;
 
@@ -104,6 +104,13 @@ struct TClock
 	int fBetween;
 
 };
+struct TSound
+{
+	TGfxSound * m_Shoot;
+	TGfxSound * m_BigShoot;
+	TGfxSound * m_Schield;
+	TGfxSound * m_Evol;
+};
 
 TState g_tEvol[g_iNumberPlayer];
 TSprite g_tPlayer[g_iNumberPlayer];
@@ -115,5 +122,6 @@ TDisplay g_tDisplay;
 TMousse g_tMousse;
 TMousse g_tCOntroller[g_iNumberPlayer];
 TClock g_tClock;
+TSound g_tSound;
 
 #endif
