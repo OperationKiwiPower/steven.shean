@@ -37,6 +37,7 @@ struct TSprite
 	TGfxSprite * pSpriteEvol_5[2];
 	TGfxSprite * pSpriteArrow;
 	TGfxSprite * pSpriteScoring;
+	TGfxSprite * pSpriteSchield;
 
 	TGfxSprite * pSpriteAmmo[g_iNumberAmmo];
 	TGfxVec2 tAmmoPositionInitial[g_iNumberAmmo];
@@ -51,6 +52,7 @@ struct TSprite
 	float fSpeed = 3.0f;
 	float fRatio = 8;
 	int iFrame = 0;
+	bool bActifSchield = false;
 };
 struct TEnnemy
 {
@@ -72,6 +74,7 @@ struct TTexture
 	TGfxTexture * pTexture_Ammo;
 	TGfxTexture * pTexture_Ennemy;
 	TGfxTexture * pTexture_Glow;
+	TGfxTexture * pTexture_Shield;
 };
 struct TText
 {
