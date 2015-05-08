@@ -4,21 +4,22 @@
 #include "Header.h"
 #include "NotVoid.h"
 
-const int g_iNumber = 0;
-
 void checkEnnemyCollision(const int iPlayer)
 {
 	for (int i = 0; i < g_iNumberEnnemy; i++)
 	{
 		for (int j = 0; j < g_iNumberAmmo; j++)
 		{
-			if (g_tEnnemy[i].tPosition.x - 8 <= g_tPlayer[iPlayer].tAmmoPositionInitial[j].x &&
-				g_tEnnemy[i].tPosition.x + 8 >= g_tPlayer[iPlayer].tAmmoPositionInitial[j].x &&
-				g_tEnnemy[i].tPosition.y - 8 <= g_tPlayer[iPlayer].tAmmoPositionInitial[j].y &&
-				g_tEnnemy[i].tPosition.y + 8 >= g_tPlayer[iPlayer].tAmmoPositionInitial[j].y)
+			if (g_tEnnemy[i].pSprite != nullptr)
 			{
-				g_tEnnemy[i].pSprite = nullptr;
-				g_tPlayer[i].iScore++;
+				if (g_tEnnemy[i].tPosition.x - 8 <= g_tPlayer[iPlayer].tAmmoPositionInitial[j].x &&
+					g_tEnnemy[i].tPosition.x + 8 >= g_tPlayer[iPlayer].tAmmoPositionInitial[j].x &&
+					g_tEnnemy[i].tPosition.y - 8 <= g_tPlayer[iPlayer].tAmmoPositionInitial[j].y &&
+					g_tEnnemy[i].tPosition.y + 8 >= g_tPlayer[iPlayer].tAmmoPositionInitial[j].y)
+				{
+					g_tEnnemy[i].pSprite = nullptr;
+					g_tPlayer[iPlayer].iScore++;
+				}
 			}
 		}
 	}
@@ -214,7 +215,7 @@ void Initialize()
 	for (int i = 0; i < g_iNumberPlayer; ++i)
 	{
 		g_tText.pScore[i] = GfxTextSpriteCreate();
-		GfxSpriteSetFilteringEnabled(g_tText.pScore[i], false);
+		//GfxSpriteSetFilteringEnabled(g_tText.pScore[i], false);
 		g_tPlayer[i].tAmmoDepl[i] = TGfxVec2(0, 0);
 		g_tPlayer[i].tAmmoPositionInitial[g_tPlayer[i].iAmmoNow]= TGfxVec2(0, 0);
 		g_tEvol[i].m_tEvolution = EStateEvol_1;
@@ -295,12 +296,12 @@ void Render()
 		}
 		GfxSpriteRender(g_tPlayer[i].pSpriteArrow);
 		RenderVsEvol(i);
-		GfxTextSpriteRender(g_tText.pScore[i], 16.0f,float((i+1)*32),EGfxColor_White,2.0f,false,true);
+		GfxTextSpriteRender(g_tText.pScore[i], 16.0f,float((i+1)*32),EGfxColor_White,1.5f,false,true);
 	}
 }
 
 void GfxMain(int, char *[])
 {
 	GfxCallbacks(Initialize, Update, Render);
-	//GfxDefaultResolution(1500, 800);
+	GfxDefaultResolution(1500, 800);
 }
