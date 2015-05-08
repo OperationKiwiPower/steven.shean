@@ -1,22 +1,55 @@
 #ifndef HEADER_LUCIOL
 #define HEADER_LUCIOL
 
-TGfxVec2 g_tMouvement;
-TGfxVec2 g_tDirection;
-
-
 const int g_iNumberPlayer = 4;
+const int g_iNumberAmmo = 20;
 
 int g_iNumberPlayerInGame = 0;
+int g_iCounter = 0;
 
+TGfxVec2 g_tMouvement[g_iNumberPlayer];
+TGfxVec2 g_tDirection[g_iNumberPlayer];
+
+enum EStateEvolution
+{
+	EStateEvol_1 = 1,
+	EStateEvol_2,
+	EStateEvol_3,
+	EStateEvol_4,
+	EStateEvol_5,
+};
+struct TState
+{
+	EStateEvolution m_tEvolution;
+};
 struct TSprite
 {
 	TGfxVec2 tPosition;
 	TGfxVec2 tPositionInitial;
-	TGfxSprite * pSprite;
-	float fSpeed = 5;
-	float fRatio = 10;
+	TGfxSprite * pSpriteEvol_1[2];
+	TGfxSprite * pSpriteEvol_2[2];
+	TGfxSprite * pSpriteEvol_3[2];
+	TGfxSprite * pSpriteEvol_4[2];
+	TGfxSprite * pSpriteArrow;
+	
+	TGfxSprite * pSpriteAmmo[g_iNumberAmmo];
+	TGfxVec2 tAmmoPositionInitial;
+	TGfxVec2 tAmmoDepl[g_iNumberAmmo];
+	int iAmmoNow = 0;
 
+	float fSpeed = 3;
+	float fRatio = 10;
+	int iFrame = 0;
+
+};
+struct TTexture
+{
+	TGfxTexture * pTexture_16;
+	TGfxTexture * pTexture_32;
+	TGfxTexture * pTexture_64;
+	TGfxTexture * pTexture_128;
+	TGfxTexture * pTexture_Arrow;
+	TGfxTexture * pTexture_Ammo;
 };
 struct TDisplay
 {
@@ -34,9 +67,12 @@ struct TMousse
 {
 	TGfxVec2 tMousse;
 };
+
+TState g_tEvol[g_iNumberPlayer];
 TSprite g_tPlayer[g_iNumberPlayer];
+TTexture g_tTexture;
 TDisplay g_tDisplay;
 TMousse g_tMousse;
 TMousse g_tCOntroller[g_iNumberPlayer];
 
-#endif // !1
+#endif

@@ -2,6 +2,15 @@
 #include "flib_vec2.h"
 #include <math.h>
 
+TGfxTexture * CreateTexture(const char *pFile)
+{
+	TGfxImage * pImage = GfxImageLoad(pFile);
+	TGfxTexture * pTexture;
+	pTexture = GfxTextureCreate(pImage);
+	
+	return pTexture;
+}
+
 TGfxSprite * DrawLine(TGfxSprite * pSprite, TGfxVec2 tPosition, TGfxVec2 tDirection, const float fRatio)
 {
 	GfxLineSpriteReset(pSprite);
@@ -26,6 +35,42 @@ TGfxSprite * DrawLine(TGfxSprite * pSprite, TGfxVec2 tPosition, TGfxVec2 tDirect
 		fPosY += tPosition.y + (tDirection.y * fMore);
 		GfxLineSpriteLineTo(pSprite, fPosX, fPosY);
 	}
+
+	return pSprite;
+}
+
+TGfxSprite * CreateFairy(TGfxTexture * pTexture, TGfxVec2 tPosition,const int iTileX,const int iTileY,const int iPixelSize, const float fRatio)
+{
+	TGfxSprite * pSprite = GfxSpriteCreate(pTexture);
+	GfxSpriteSetCutout(pSprite, iTileX, iTileY, iPixelSize, iPixelSize);
+	GfxSpriteSetFilteringEnabled(pSprite, false);
+	GfxSpriteSetScale(pSprite, fRatio, fRatio);
+	GfxSpriteSetPivot(pSprite, float(iPixelSize / 2), float(iPixelSize / 2));
+	GfxSpriteSetPosition(pSprite, tPosition.x, tPosition.y);
+
+	return pSprite;
+}
+
+TGfxSprite * CreateArrow(TGfxTexture * pTexture, TGfxVec2 tPosition, const float fDecal, const int iTileY, const float fRatio)
+{
+	TGfxSprite * pSprite = GfxSpriteCreate(pTexture);
+	GfxSpriteSetFilteringEnabled(pSprite, false);
+	GfxSpriteSetCutout(pSprite, 0, iTileY, 16, 16);
+	GfxSpriteSetScale(pSprite, fRatio, fRatio);
+	GfxSpriteSetPivot(pSprite, -fDecal, 8);
+	GfxSpriteSetPosition(pSprite, tPosition.x, tPosition.y);
+
+	return pSprite;
+}
+
+TGfxSprite * CreateAmmo(TGfxTexture * pTexture, TGfxVec2 tPosition, const int iTileY, const float fRatio)
+{
+	TGfxSprite * pSprite = GfxSpriteCreate(pTexture);
+	GfxSpriteSetFilteringEnabled(pSprite, false);
+	GfxSpriteSetCutout(pSprite, 0, iTileY, 8, 8);
+	GfxSpriteSetScale(pSprite, fRatio, fRatio);
+	GfxSpriteSetPivot(pSprite, 4, 4);
+	GfxSpriteSetPosition(pSprite, tPosition.x, tPosition.y);
 
 	return pSprite;
 }
