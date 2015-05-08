@@ -28,6 +28,7 @@ void createSprite()
 	g_tTexture.pTexture_32 = CreateTexture("fairy_32.tga");
 	g_tTexture.pTexture_64 = CreateTexture("fairy_64.tga");
 	g_tTexture.pTexture_128 = CreateTexture("fairy_128.tga");
+	g_tTexture.pTexture_256 = CreateTexture("fairy_256.tga");
 	g_tTexture.pTexture_Arrow = CreateTexture("arrow.tga");
 	g_tTexture.pTexture_Ammo = CreateTexture("ammo.tga");
 	g_tTexture.pTexture_Ennemy = CreateTexture("point.tga");
@@ -67,7 +68,19 @@ void createSprite()
 		g_tPlayer[i].pSpriteEvol_3[1] = CreateFairy(g_tTexture.pTexture_64, g_tPlayer[i].tPosition, 64, i * 64, 64, 1);
 		g_tPlayer[i].pSpriteEvol_4[0] = CreateFairy(g_tTexture.pTexture_128, g_tPlayer[i].tPosition, 0, i * 128, 128, 1);
 		g_tPlayer[i].pSpriteEvol_4[1] = CreateFairy(g_tTexture.pTexture_128, g_tPlayer[i].tPosition, 128, i * 128, 128, 1);
+		g_tPlayer[i].pSpriteScoring = CreateFairy(g_tTexture.pTexture_128, g_tPlayer[i].tPosition, 128, i * 128, 128, 1);
+		g_tPlayer[i].pSpriteEvol_5[0] = CreateFairy(g_tTexture.pTexture_256, g_tPlayer[i].tPosition, 0, i * 256, 256, 1);
 		g_tPlayer[i].pSpriteArrow = CreateArrow(g_tTexture.pTexture_Arrow, g_tPlayer[i].tPosition, 32, i * 16, 1);
+		for (int j = 0; j < g_iNumberAmmo; j++)
+		{
+			g_tPlayer[i].pSpriteAmmo[j] = CreateAmmo(g_tTexture.pTexture_Ammo, g_tPlayer[i].tPosition, i * 8, 1);
+			GfxSpriteSetAngle(g_tPlayer[i].pSpriteAmmo[j], GfxMathDegToRad(-45));
+		}
+		g_tPlayer[i].pSpriteBigAmmo = CreateAmmo(g_tTexture.pTexture_Ammo, g_tPlayer[i].tPosition, i * 8, 1);
+		GfxSpriteSetAngle(g_tPlayer[i].pSpriteBigAmmo, GfxMathDegToRad(-45));
+		GfxSpriteSetScale(g_tPlayer[i].pSpriteBigAmmo, 8, 8);
+		g_tPlayer[i].tBigAmmoPositionInitial = TGfxVec2(-128, -128);
+		GfxSpriteSetPosition(g_tPlayer[i].pSpriteBigAmmo, g_tPlayer[i].tBigAmmoPositionInitial.x, g_tPlayer[i].tBigAmmoPositionInitial.y);
 	}
 }
 void checkEnnemyCollision(const int iPlayer)
@@ -79,10 +92,10 @@ void checkEnnemyCollision(const int iPlayer)
 		{
 			if (g_tEnnemy[i].pSprite[0] != g_tEnnemy[i].pSprite[1] && g_tEnnemy[i].pSprite[0] != nullptr)
 			{
-				if (g_tEnnemy[i].tPosition.x - g_tPlayer[iPlayer].fRatio <= g_tPlayer[iPlayer].tAmmoPositionInitial[j].x &&
-					g_tEnnemy[i].tPosition.x + g_tPlayer[iPlayer].fRatio >= g_tPlayer[iPlayer].tAmmoPositionInitial[j].x &&
-					g_tEnnemy[i].tPosition.y - g_tPlayer[iPlayer].fRatio <= g_tPlayer[iPlayer].tAmmoPositionInitial[j].y &&
-					g_tEnnemy[i].tPosition.y + g_tPlayer[iPlayer].fRatio >= g_tPlayer[iPlayer].tAmmoPositionInitial[j].y)
+				if (g_tEnnemy[i].tPosition.x - 8 <= g_tPlayer[iPlayer].tAmmoPositionInitial[j].x &&
+					g_tEnnemy[i].tPosition.x + 8 >= g_tPlayer[iPlayer].tAmmoPositionInitial[j].x &&
+					g_tEnnemy[i].tPosition.y - 8 <= g_tPlayer[iPlayer].tAmmoPositionInitial[j].y &&
+					g_tEnnemy[i].tPosition.y + 8 >= g_tPlayer[iPlayer].tAmmoPositionInitial[j].y)
 				{
 					g_tEnnemy[i].pSprite[0] = g_tEnnemy[i].pSprite[1];
 					g_tPlayer[iPlayer].iScore += 5;
@@ -97,13 +110,16 @@ void checkEnnemyCollision(const int iPlayer)
 		{
 			if (i != iPlayer)
 			{
-				if (g_tPlayer[iPlayer].tPosition.x - g_tPlayer[iPlayer].fRatio <= g_tPlayer[i].tAmmoPositionInitial[j].x &&
-					g_tPlayer[iPlayer].tPosition.x + g_tPlayer[iPlayer].fRatio >= g_tPlayer[i].tAmmoPositionInitial[j].x &&
-					g_tPlayer[iPlayer].tPosition.y - g_tPlayer[iPlayer].fRatio <= g_tPlayer[i].tAmmoPositionInitial[j].y &&
-					g_tPlayer[iPlayer].tPosition.y + g_tPlayer[iPlayer].fRatio >= g_tPlayer[i].tAmmoPositionInitial[j].y &&
-					g_tEvol[iPlayer].m_tEvolution > g_tEvol[i].m_tEvolution)
+				if (g_tPlayer[iPlayer].tPosition.x <= g_tPlayer[i].tBigAmmoPositionInitial.x + g_tPlayer[i].fRatio &&
+					g_tPlayer[iPlayer].tPosition.x >= g_tPlayer[i].tBigAmmoPositionInitial.x - g_tPlayer[i].fRatio &&
+					g_tPlayer[iPlayer].tPosition.y <= g_tPlayer[i].tBigAmmoPositionInitial.y + g_tPlayer[i].fRatio &&
+					g_tPlayer[iPlayer].tPosition.y >= g_tPlayer[i].tBigAmmoPositionInitial.y - g_tPlayer[i].fRatio )
 				{
-					g_tPlayer[i].iScore += 5;
+					g_tPlayer[iPlayer].iScore --;
+					if (g_tPlayer[iPlayer].iScore <= 0)
+					{
+						g_tPlayer[iPlayer].iScore = 0;
+					}
 				}
 			}
 		}
@@ -200,12 +216,22 @@ void Controller(const int iPlayer)
 	{
 		g_tDirection[iPlayer] = TGfxVec2(fJoystickRightX, fJoystickRightY).Normalize()* g_tPlayer[iPlayer].fSpeed * 2;
 	}
-
+	if (GfxInputIsJustPressed(EGfxInputID_360PadShoulderL,iPlayer) &&
+		((g_tPlayer[iPlayer].tBigAmmoPositionInitial.x <= 0 ||
+		g_tPlayer[iPlayer].tBigAmmoPositionInitial.y <= 0 )||
+		(g_tPlayer[iPlayer].tBigAmmoPositionInitial.x >= g_tDisplay.X.iFull ||
+		g_tPlayer[iPlayer].tBigAmmoPositionInitial.y >= g_tDisplay.Y.iFull ))&&
+		(g_tPlayer[iPlayer].iScore >= 5))
+	{
+		g_tPlayer[iPlayer].tBigAmmoPositionInitial = g_tPlayer[iPlayer].tPosition;
+		g_tPlayer[iPlayer].tBigAmmoDepl = g_tDirection[iPlayer];
+		g_tPlayer[iPlayer].iScore -= 5;
+	}
 	if (GfxInputIsJustPressed(EGfxInputID_360PadShoulderR, iPlayer))
 	{
 		g_tPlayer[iPlayer].tAmmoPositionInitial[g_tPlayer[iPlayer].iAmmoNow] = g_tPlayer[iPlayer].tPosition;
 		g_tPlayer[iPlayer].tAmmoDepl[g_tPlayer[iPlayer].iAmmoNow] = g_tDirection[iPlayer];
-		g_tPlayer[iPlayer].iAmmoNow ++;
+		g_tPlayer[iPlayer].iAmmoNow++;
 
 		if (g_tPlayer[iPlayer].iAmmoNow >= g_iNumberAmmo)
 		{
@@ -235,8 +261,9 @@ void Controller(const int iPlayer)
 	GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteArrow, g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
 	GfxSpriteSetAngle(g_tPlayer[iPlayer].pSpriteArrow, GfxMathDegToRad(fAngle));
 	GfxSpriteSetAngle(g_tPlayer[iPlayer].pSpriteAmmo[g_tPlayer[iPlayer].iAmmoNow], GfxMathDegToRad(fAngle - 45));
+	GfxSpriteSetAngle(g_tPlayer[iPlayer].pSpriteBigAmmo, GfxMathDegToRad(fAngle - 45));
 
-	GfxDbgPrintf("%f\n", fAngle);
+	//GfxDbgPrintf("%f\n", fAngle);
 
 }
 void SpriteVsEvol(const int iPlayer)
@@ -247,54 +274,80 @@ void SpriteVsEvol(const int iPlayer)
 		g_tPlayer[iPlayer].tAmmoPositionInitial[j].x += g_tPlayer[iPlayer].tAmmoDepl[j].x;
 		GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteAmmo[j], g_tPlayer[iPlayer].tAmmoPositionInitial[j].x, g_tPlayer[iPlayer].tAmmoPositionInitial[j].y);
 	}
+	g_tPlayer[iPlayer].tBigAmmoPositionInitial.y += g_tPlayer[iPlayer].tBigAmmoDepl.y;
+	g_tPlayer[iPlayer].tBigAmmoPositionInitial.x += g_tPlayer[iPlayer].tBigAmmoDepl.x;
+	GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteBigAmmo, g_tPlayer[iPlayer].tBigAmmoPositionInitial.x, g_tPlayer[iPlayer].tBigAmmoPositionInitial .y);
+
 	switch (g_tEvol[iPlayer].m_tEvolution)
 	{
 	case EStateEvol_1:
 		GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteEvol_1[0], g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
 		GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteEvol_1[1], g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
-		if (((GfxInputIsJustPressed(EGfxInputID_KeySpace) || (GfxInputIsJustPressed(EGfxInputID_360PadY, iPlayer))) && g_tPlayer[iPlayer].iScore >= 50))
+		if (g_tPlayer[iPlayer].iScore >= 50)
 		{
 			g_tEvol[iPlayer].m_tEvolution = EStateEvol_2;
 			g_tPlayer[iPlayer].iScore -= 50;
 			g_tPlayer[iPlayer].fRatio *= 2;
+			for (int i = 0; i < g_iNumberAmmo; i++)
+			{
+				GfxSpriteSetScale(g_tPlayer[iPlayer].pSpriteAmmo[i], 1.5f, 1.5f);
+			}
 		}
 		break;
 	case EStateEvol_2:
 		GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteEvol_2[0], g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
 		GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteEvol_2[1], g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
-		if (((GfxInputIsJustPressed(EGfxInputID_KeySpace) || (GfxInputIsJustPressed(EGfxInputID_360PadY, iPlayer))) && g_tPlayer[iPlayer].iScore >= 100))
+		if ( g_tPlayer[iPlayer].iScore >= 100)
 		{
 			g_tEvol[iPlayer].m_tEvolution = EStateEvol_3;
 			g_tPlayer[iPlayer].iScore -= 100;
 			g_tPlayer[iPlayer].fRatio *= 2;
+			for (int i = 0; i < g_iNumberAmmo; i++)
+			{
+				GfxSpriteSetScale(g_tPlayer[iPlayer].pSpriteAmmo[i], 2, 2);
+			}
 		}
 		break;
 	case EStateEvol_3:
 		GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteEvol_3[0], g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
 		GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteEvol_3[1], g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
-		if (((GfxInputIsJustPressed(EGfxInputID_KeySpace) || (GfxInputIsJustPressed(EGfxInputID_360PadY, iPlayer))) && g_tPlayer[iPlayer].iScore >= 150))
+		if (g_tPlayer[iPlayer].iScore >= 150)
 		{
 			g_tEvol[iPlayer].m_tEvolution = EStateEvol_4;
 			g_tPlayer[iPlayer].iScore -= 150;
 			g_tPlayer[iPlayer].fRatio *= 2;
+			for (int i = 0; i < g_iNumberAmmo; i++)
+			{
+				GfxSpriteSetScale(g_tPlayer[iPlayer].pSpriteAmmo[i], 2.5f, 2.5f);
+			}
 		}
 		break;
 	case EStateEvol_4:
 		GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteEvol_4[0], g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
 		GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteEvol_4[1], g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
-		if (((GfxInputIsJustPressed(EGfxInputID_KeySpace) || (GfxInputIsJustPressed(EGfxInputID_360PadY, iPlayer))) && g_tPlayer[iPlayer].iScore >= 200))
+		if (g_tPlayer[iPlayer].iScore >= 200)
 		{
 			g_tEvol[iPlayer].m_tEvolution = EStateEvol_5;
 			g_tPlayer[iPlayer].iScore -= 200;
 			g_tPlayer[iPlayer].fRatio *= 2;
+			for (int i = 0; i < g_iNumberAmmo; i++)
+			{
+				GfxSpriteSetScale(g_tPlayer[iPlayer].pSpriteAmmo[i], 3, 3);
+			}
 		}
 		break;
 	case EStateEvol_5:
-		if (GfxInputIsJustPressed(EGfxInputID_KeySpace) && g_tPlayer[iPlayer].iScore >= 300)
+		GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteEvol_5[0], g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
+		if (g_tPlayer[iPlayer].iScore >= 250)
 		{
 			g_tEvol[iPlayer].m_tEvolution = EStateEvol_1;
 			g_tPlayer[iPlayer].iScore = 0;
-		}		break;
+			for (int i = 0; i < g_iNumberAmmo; i++)
+			{
+				GfxSpriteSetScale(g_tPlayer[iPlayer].pSpriteAmmo[i], 4, 4);
+			}
+		}	
+		break;
 	default:
 		break;
 	}
@@ -319,6 +372,7 @@ void RenderVsEvol(const int iPlayer)
 
 		break;
 	case EStateEvol_5:
+		GfxSpriteRender(g_tPlayer[iPlayer].pSpriteEvol_5[0]);
 
 		break;
 	default:
@@ -329,7 +383,7 @@ void setScoring()
 {
 	for (int i = 0; i < g_iNumberPlayer; i++)
 	{
-		GfxTextSpritePrintf(g_tText.pScore[i],"Score:%i",g_tPlayer[i].iScore);
+		GfxTextSpritePrintf(g_tText.pScore[i]," :%i   %i",g_tPlayer[i].iScore,(g_tEvol[i].m_tEvolution * 50));
 	}
 }
 
@@ -344,12 +398,10 @@ void Initialize()
 	createSprite();
 	for (int i = 0; i < g_iNumberPlayer; ++i)
 	{
-		for (int j = 0; j < g_iNumberAmmo; j++)
-		{
-			g_tPlayer[i].pSpriteAmmo[j] = CreateAmmo(g_tTexture.pTexture_Ammo, g_tPlayer[i].tPosition, i * 8, 1);
-			GfxSpriteSetAngle(g_tPlayer[i].pSpriteAmmo[j], GfxMathDegToRad(-45));
-		}
 
+		GfxSpriteSetScale(g_tPlayer[i].pSpriteScoring, 0.25f, 0.25f);
+		GfxSpriteSetFilteringEnabled(g_tText.pScore[i], false);
+		GfxSpriteSetPosition(g_tPlayer[i].pSpriteScoring, 32.0f, float (32 * (i + 1)));
 	}
 }
 void Update()
@@ -358,7 +410,10 @@ void Update()
 	clock();
 	MovePoint();
 	g_iCounter++;
-//	if (GfxInputIsJustPressed(inputID_))
+	if (GfxInputIsJustPressed(EGfxInputID_360PadStart))
+	{
+		GfxExitRequest();
+	}
 	for (int i = 0; i < g_iNumberGlow; ++i)
 	{
 		GfxSpriteSetPosition(g_tGlow[i].pSprite[0], (g_tGlow[i].tPosition.x + cos(GfxMathDegToRad(g_tGlow[i].fAngle)) * 250), (g_tGlow[i].tPosition.y + sin(GfxMathDegToRad(g_tGlow[i].fAngle)) * 250));
@@ -433,15 +488,17 @@ void Render()
 		{
 		GfxSpriteRender(g_tPlayer[i].pSpriteAmmo[j]);
 		}
+		GfxSpriteRender(g_tPlayer[i].pSpriteBigAmmo);
 		GfxSpriteRender(g_tPlayer[i].pSpriteArrow);
 		RenderVsEvol(i);
-		GfxTextSpriteRender(g_tText.pScore[i], 16.0f,float((i+1)*32),EGfxColor_White,1.5f,false,true);
+		GfxTextSpriteRender(g_tText.pScore[i], 32.0f, float (32 * (i + 1)), EGfxColor_White, 3, false, true);
+		
+		GfxSpriteRender(g_tPlayer[i].pSpriteScoring);
 	}
 }
 
 void GfxMain(int, char *[])
 {
 	GfxCallbacks(Initialize, Update, Render);
-	GfxDefaultResolution(1500, 800);
+	GfxDefaultResolution(1500, 700);
 }
-

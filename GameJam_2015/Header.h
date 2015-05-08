@@ -34,11 +34,18 @@ struct TSprite
 	TGfxSprite * pSpriteEvol_2[2];
 	TGfxSprite * pSpriteEvol_3[2];
 	TGfxSprite * pSpriteEvol_4[2];
+	TGfxSprite * pSpriteEvol_5[2];
 	TGfxSprite * pSpriteArrow;
+	TGfxSprite * pSpriteScoring;
 
 	TGfxSprite * pSpriteAmmo[g_iNumberAmmo];
 	TGfxVec2 tAmmoPositionInitial[g_iNumberAmmo];
 	TGfxVec2 tAmmoDepl[g_iNumberAmmo];
+
+	TGfxSprite * pSpriteBigAmmo;
+	TGfxVec2 tBigAmmoPositionInitial;
+	TGfxVec2 tBigAmmoDepl;
+
 	int iAmmoNow = 0;
 	int iScore = 0;
 	float fSpeed = 3.0f;
@@ -60,6 +67,7 @@ struct TTexture
 	TGfxTexture * pTexture_32;
 	TGfxTexture * pTexture_64;
 	TGfxTexture * pTexture_128;
+	TGfxTexture * pTexture_256;
 	TGfxTexture * pTexture_Arrow;
 	TGfxTexture * pTexture_Ammo;
 	TGfxTexture * pTexture_Ennemy;
@@ -68,6 +76,7 @@ struct TTexture
 struct TText
 {
 	TGfxSprite * pScore[g_iNumberEnnemy];
+	TGfxSprite * pSprite;
 };
 struct TDisplay
 {
