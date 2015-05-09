@@ -61,6 +61,7 @@ void createSprite()
 		g_tPlayer[i].tAmmoDepl[i] = TGfxVec2(0, 0);
 		g_tPlayer[i].tAmmoPositionInitial[g_tPlayer[i].iAmmoNow] = TGfxVec2(0, 0);
 		g_tEvol[i].m_tEvolution = EStateEvol_1;
+		g_tMenu.m_tMenu= EStateMenu_Ingame;
 		g_tPlayer[i].tPosition.x = g_tPlayer[i].tPositionInitial.x;
 		g_tPlayer[i].tPosition.y = g_tPlayer[i].tPositionInitial.y;
 		g_tPlayer[i].pSpriteEvol_1[0] = CreateFairy(g_tTexture.pTexture_16, g_tPlayer[i].tPosition, 0, i * 16, 16, 1);
@@ -132,10 +133,10 @@ void checkEnnemyCollision(const int iPlayer)
 		{
 			if (i != iPlayer)
 			{
-				if (g_tPlayer[iPlayer].tPosition.x <= g_tPlayer[i].tBigAmmoPositionInitial.x + g_tPlayer[i].fRatio &&
-					g_tPlayer[iPlayer].tPosition.x >= g_tPlayer[i].tBigAmmoPositionInitial.x - g_tPlayer[i].fRatio &&
-					g_tPlayer[iPlayer].tPosition.y <= g_tPlayer[i].tBigAmmoPositionInitial.y + g_tPlayer[i].fRatio &&
-					g_tPlayer[iPlayer].tPosition.y >= g_tPlayer[i].tBigAmmoPositionInitial.y - g_tPlayer[i].fRatio &&
+				if (g_tPlayer[iPlayer].tPosition.x <= g_tPlayer[i].tBigAmmoPositionInitial.x + g_tPlayer[iPlayer].fRatio &&
+					g_tPlayer[iPlayer].tPosition.x >= g_tPlayer[i].tBigAmmoPositionInitial.x - g_tPlayer[iPlayer].fRatio &&
+					g_tPlayer[iPlayer].tPosition.y <= g_tPlayer[i].tBigAmmoPositionInitial.y + g_tPlayer[iPlayer].fRatio &&
+					g_tPlayer[iPlayer].tPosition.y >= g_tPlayer[i].tBigAmmoPositionInitial.y - g_tPlayer[iPlayer].fRatio &&
 					(g_tPlayer[iPlayer].bActifSchield == false))
 				{
 					g_tPlayer[iPlayer].iScore --;
@@ -233,6 +234,18 @@ void Controller(const int iPlayer)
 	float fJoystickRightX = GfxInputGetPadStickRightX(iPlayer);
 	float fJoystickRightY = (-1 * GfxInputGetPadStickRightY(iPlayer));
 
+	if (GfxInputIsJustPressed(EGfxInputID_360PadY) && (GfxInputGetPadTriggerRight != 0))
+	{
+		if (g_bGodMod == true)
+		{
+			g_bGodMod = false;
+		}
+		else
+		{
+			g_bGodMod = true;
+		}
+	}
+
 	g_tMouvement[iPlayer] = TGfxVec2(fJoystickLeftX, fJoystickLeftY) * g_tPlayer[iPlayer].fSpeed;
 
 	if (fJoystickRightX != 0 && fJoystickRightY != 0)
@@ -252,7 +265,7 @@ void Controller(const int iPlayer)
 	{
 		g_tPlayer[iPlayer].bActifSchield = false;
 	}
-
+	//--------BIG
 	if (GfxInputIsJustPressed(EGfxInputID_360PadShoulderL, iPlayer) &&
 		((g_tPlayer[iPlayer].tBigAmmoPositionInitial.x <= 0 ||
 		g_tPlayer[iPlayer].tBigAmmoPositionInitial.y <= 0 )||
@@ -266,19 +279,43 @@ void Controller(const int iPlayer)
 		g_tPlayer[iPlayer].tBigAmmoDepl = g_tDirection[iPlayer];
 		g_tPlayer[iPlayer].iScore -= 5;
 	}
-	if (GfxInputIsJustPressed(EGfxInputID_360PadShoulderR, iPlayer) && (g_tPlayer[iPlayer].bActifSchield == false))
+	//--------little
+	if (g_bGodMod == false)
 	{
-		GfxSoundPlay(g_tSound.m_Shoot);
-		g_tPlayer[iPlayer].tAmmoPositionInitial[g_tPlayer[iPlayer].iAmmoNow] = g_tPlayer[iPlayer].tPosition;
-		g_tPlayer[iPlayer].tAmmoDepl[g_tPlayer[iPlayer].iAmmoNow] = g_tDirection[iPlayer];
-		g_tPlayer[iPlayer].iAmmoNow++;
-
-		if (g_tPlayer[iPlayer].iAmmoNow >= g_iNumberAmmo)
+		if (GfxInputIsJustPressed(EGfxInputID_360PadShoulderR, iPlayer) && (g_tPlayer[iPlayer].bActifSchield == false))
 		{
-			g_tPlayer[iPlayer].iAmmoNow = 0;
+
+			GfxSoundPlay(g_tSound.m_Shoot);
+			g_tPlayer[iPlayer].tAmmoPositionInitial[g_tPlayer[iPlayer].iAmmoNow] = g_tPlayer[iPlayer].tPosition;
+			g_tPlayer[iPlayer].tAmmoDepl[g_tPlayer[iPlayer].iAmmoNow] = g_tDirection[iPlayer];
+			g_tPlayer[iPlayer].iAmmoNow++;
+
+			if (g_tPlayer[iPlayer].iAmmoNow >= g_iNumberAmmo)
+			{
+				g_tPlayer[iPlayer].iAmmoNow = 0;
+			}
 		}
 	}
+	else
+	{
+		if (GfxInputIsPressed(EGfxInputID_360PadShoulderR, iPlayer) && (g_tPlayer[iPlayer].bActifSchield == false))
+		{
 
+			if (g_iCounter % 5 == 0)
+			{
+			GfxSoundPlay(g_tSound.m_Shoot);
+			}
+			g_tPlayer[iPlayer].tAmmoPositionInitial[g_tPlayer[iPlayer].iAmmoNow] = g_tPlayer[iPlayer].tPosition;
+			g_tPlayer[iPlayer].tAmmoDepl[g_tPlayer[iPlayer].iAmmoNow] = g_tDirection[iPlayer];
+			g_tPlayer[iPlayer].iAmmoNow++;
+
+			if (g_tPlayer[iPlayer].iAmmoNow >= g_iNumberAmmo)
+			{
+				g_tPlayer[iPlayer].iAmmoNow = 0;
+			}
+		}
+	}
+	//------------
 	float hypothenuse = g_tDirection[iPlayer].Length();
 	float fAngle;
 
@@ -295,9 +332,24 @@ void Controller(const int iPlayer)
 		g_tPlayer[iPlayer].tPosition.x + g_tMouvement[iPlayer].x <= g_tDisplay.X.iFull &&
 		g_tPlayer[iPlayer].tPosition.y + g_tMouvement[iPlayer].y <= g_tDisplay.Y.iFull)
 	{
+		//-----------------------------collision player VS pointNoir
+		for (int i = 0; i < g_iNumberEnnemyRender; i++)
+		{
+			if (g_tPlayer[iPlayer].tPosition.x<= g_tEnnemy[i].tPosition.x + 16 &&
+				g_tPlayer[iPlayer].tPosition.x>= g_tEnnemy[i].tPosition.x - 16 &&
+				g_tPlayer[iPlayer].tPosition.y<= g_tEnnemy[i].tPosition.y + 16 &&
+				g_tPlayer[iPlayer].tPosition.y>= g_tEnnemy[i].tPosition.y - 16)
+			{
+				if (g_tEnnemy[i].pSprite[0] != nullptr && g_tEnnemy[i].pSprite[0] != g_tEnnemy[i].pSprite[1])
+				{
+					g_tMouvement[iPlayer] *= -1;
+					//g_tEnnemy[i].pSprite[0] = nullptr;
+				}
+			}
+		}
 		g_tPlayer[iPlayer].tPosition += g_tMouvement[iPlayer];
 	}
-
+	GfxSpriteSetPivot(g_tPlayer[iPlayer].pSpriteArrow, -g_tPlayer[iPlayer].fRatio,8);
 	GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteArrow, g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
 	GfxSpriteSetAngle(g_tPlayer[iPlayer].pSpriteArrow, GfxMathDegToRad(fAngle));
 	GfxSpriteSetAngle(g_tPlayer[iPlayer].pSpriteAmmo[g_tPlayer[iPlayer].iAmmoNow], GfxMathDegToRad(fAngle - 45));
@@ -308,6 +360,10 @@ void Controller(const int iPlayer)
 }
 void SpriteVsEvol(const int iPlayer)
 {
+	if (GfxInputIsPressed(EGfxInputID_360PadBack, iPlayer))
+	{
+		g_tPlayer[iPlayer].iScore += 5;
+	}
 	for (int j = 0; j < g_iNumberAmmo; j++)
 	{
 		g_tPlayer[iPlayer].tAmmoPositionInitial[j].y += g_tPlayer[iPlayer].tAmmoDepl[j].y;
@@ -331,6 +387,7 @@ void SpriteVsEvol(const int iPlayer)
 			g_tEvol[iPlayer].m_tEvolution = EStateEvol_2;
 			g_tPlayer[iPlayer].iScore -= 50;
 			g_tPlayer[iPlayer].fRatio *= 2;
+			GfxSpriteSetPivot(g_tPlayer[iPlayer].pSpriteArrow, g_tPlayer[iPlayer].fRatio, 8);
 			for (int i = 0; i < g_iNumberAmmo; i++)
 			{
 				GfxSpriteSetScale(g_tPlayer[iPlayer].pSpriteAmmo[i], 1.5f, 1.5f);
@@ -387,17 +444,18 @@ void SpriteVsEvol(const int iPlayer)
 		break;
 	case EStateEvol_5:
 		GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteEvol_5[0], g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
-		if (g_tPlayer[iPlayer].iScore >= 250)
+		/*if (g_tPlayer[iPlayer].iScore >= 250)
 		{
 			GfxSoundPlay(g_tSound.m_Evol);
 
 			g_tEvol[iPlayer].m_tEvolution = EStateEvol_1;
 			g_tPlayer[iPlayer].iScore = 0;
+			g_tPlayer[iPlayer].fRatio /= 8;
 			for (int i = 0; i < g_iNumberAmmo; i++)
 			{
 				GfxSpriteSetScale(g_tPlayer[iPlayer].pSpriteAmmo[i], 4, 4);
 			}
-		}	
+		}*/	
 		break;
 	default:
 		break;
@@ -434,34 +492,19 @@ void setScoring()
 {
 	for (int i = 0; i < g_iNumberPlayer; i++)
 	{
-		GfxTextSpritePrintf(g_tText.pScore[i]," :%i   %i",g_tPlayer[i].iScore,(g_tEvol[i].m_tEvolution * 50));
+		GfxTextSpritePrintf(g_tText.pScore[i]," :%i",g_tPlayer[i].iScore);
 	}
 }
 
-void Initialize()
+void MenuUpdate()
 {
-	g_tClock.fOld = GfxTimeGetMilliseconds();
-	Display();
-	g_tSound.m_Shoot = CreateSound("Wave_1.wav");
-	//g_tSound.m_Schield= CreateSound("Wave_2.wav");
-	g_tSound.m_Schield = CreateSound("Wave_3.wav");
-	g_tSound.m_BigShoot = CreateSound("Wave_4.wav");
-	//g_tSound.m_ = CreateSound("Wave_5.wav");
-	g_tSound.m_Evol = CreateSound("Wave_6.wav");
 
-	for (int i = 0; i < g_iNumberPlayer; ++i)
-	{
-		SetInitialPlayer(i);
-	}
-	createSprite();
-	for (int i = 0; i < g_iNumberPlayer; ++i)
-	{
-		GfxSpriteSetScale(g_tPlayer[i].pSpriteScoring, 0.25f, 0.25f);
-		GfxSpriteSetFilteringEnabled(g_tText.pScore[i], false);
-		GfxSpriteSetPosition(g_tPlayer[i].pSpriteScoring, 32.0f, float (32 * (i + 1)));
-	}
 }
-void Update()
+void TutoUpdate()
+{
+
+}
+void IngameUpdate()
 {
 	setScoring();
 	clock();
@@ -506,10 +549,13 @@ void Update()
 			}
 		}
 	}
-	if (g_tClock.fBetween >= (4000/(g_iNumberPlayerInGame + 1)))
+	if (g_tClock.fBetween >= (4000 / (g_iNumberPlayerInGame + 1)))
 	{
 		g_tClock.fOld = GfxTimeGetMilliseconds();
-		g_iNumberEnnemyRender++;
+		if (g_iNumberEnnemyRender != g_iNumberEnnemy)
+		{
+			g_iNumberEnnemyRender++;
+		}
 	}
 	g_iNumberPlayerInGame = CheckPad();
 	for (int i = 0; i < g_iNumberPlayer; i++)
@@ -520,10 +566,20 @@ void Update()
 	{
 		Controller(i);
 	}
+
 }
-void Render()
+
+void MenuRender()
 {
-	GfxClear(GfxColor(0,30,0,255));
+
+}
+void TutoRender()
+{
+
+}
+void IngameRender()
+{
+
 	for (int i = 0; i < g_iNumberGlow; i++)
 	{
 		GfxSpriteRender(g_tGlow[i].pSprite[0]);
@@ -532,6 +588,7 @@ void Render()
 	{
 		if (g_tEnnemy[i].pSprite[0] != nullptr)
 		{
+
 			GfxSpriteRender(g_tEnnemy[i].pSprite[0]);
 		}
 	}
@@ -539,18 +596,86 @@ void Render()
 	{
 		for (int j = 0; j < g_iNumberAmmo; j++)
 		{
-		GfxSpriteRender(g_tPlayer[i].pSpriteAmmo[j]);
+			GfxSpriteRender(g_tPlayer[i].pSpriteAmmo[j]);
 		}
 		GfxSpriteRender(g_tPlayer[i].pSpriteBigAmmo);
 		GfxSpriteRender(g_tPlayer[i].pSpriteArrow);
 		RenderVsEvol(i);
-		GfxTextSpriteRender(g_tText.pScore[i], 32.0f, float (32 * (i + 1)), EGfxColor_White, 3, false, true);
-		
+		GfxTextSpriteRender(g_tText.pScore[i], 32.0f, float(32 * (i + 1)), EGfxColor_White, 3, false, true);
+
 		GfxSpriteRender(g_tPlayer[i].pSpriteScoring);
 		if (g_tPlayer[i].bActifSchield == true)
 		{
 			GfxSpriteRender(g_tPlayer[i].pSpriteSchield);
 		}
+	}
+	if (g_bGodMod == true)
+	{
+		GfxTextSpriteRender(g_pTextGod,float( g_tDisplay.X.iTriQuart), float (GfxSpriteGetSizeY(g_pTextGod)), EGfxColor_White, 3, true, false);
+	}
+}
+
+void Initialize()
+{
+	g_tClock.fOld = GfxTimeGetMilliseconds();
+	Display();
+	g_tSound.m_Shoot = CreateSound("Wave_1.wav");
+	//g_tSound.m_Schield= CreateSound("Wave_2.wav");
+	g_tSound.m_Schield = CreateSound("Wave_3.wav");
+	g_tSound.m_BigShoot = CreateSound("Wave_4.wav");
+	//g_tSound.m_ = CreateSound("Wave_5.wav");
+	g_tSound.m_Evol = CreateSound("Wave_6.wav");
+
+	g_pTextGod = GfxTextSpriteCreate();
+	GfxTextSpritePrintf(g_pTextGod, "GoodMod Activated");
+	GfxSpriteSetFilteringEnabled(g_pTextGod, false);
+	for (int i = 0; i < g_iNumberPlayer; ++i)
+	{
+		SetInitialPlayer(i);
+	}
+	createSprite();
+	for (int i = 0; i < g_iNumberPlayer; ++i)
+	{
+		GfxSpriteSetScale(g_tPlayer[i].pSpriteScoring, 0.25f, 0.25f);
+		GfxSpriteSetFilteringEnabled(g_tText.pScore[i], false);
+		GfxSpriteSetPosition(g_tPlayer[i].pSpriteScoring, 32.0f, float (32 * (i + 1)));
+	}
+}
+void Update()
+{
+	switch (g_tMenu.m_tMenu)
+	{
+	case EStateMenu_principale:
+		MenuUpdate();
+		break;
+	case EStateMenu_tuto:
+		TutoUpdate();
+		break;
+	case EStateMenu_Ingame:
+		IngameUpdate();
+		break;
+
+	default:
+		break;
+	}
+}
+void Render()
+{
+	GfxClear(GfxColor(0,30,0,255));
+	switch (g_tMenu.m_tMenu)
+	{
+	case EStateMenu_principale:
+		MenuRender();
+		break;
+	case EStateMenu_tuto:
+		TutoRender();
+		break;
+	case EStateMenu_Ingame:
+		IngameRender();
+		break;
+
+	default:
+		break;
 	}
 
 }

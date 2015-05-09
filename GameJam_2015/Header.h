@@ -2,7 +2,7 @@
 #define HEADER_LUCIOL
 
 const int g_iNumberPlayer = 4;
-const int g_iNumberAmmo = 20;
+const int g_iNumberAmmo = 200;
 const int g_iNumberEnnemy = 55;
 const int g_iNumberGlow = 10;
 
@@ -10,6 +10,9 @@ int g_iWitchChange = 0;
 int g_iNumberPlayerInGame = 0;
 int g_iNumberEnnemyRender = 0;
 int g_iCounter = 0;
+
+bool g_bGodMod = false;
+TGfxSprite* g_pTextGod;
 
 TGfxVec2 g_tMouvement[g_iNumberPlayer];
 TGfxVec2 g_tDirection[g_iNumberPlayer];
@@ -22,10 +25,24 @@ enum EStateEvolution
 	EStateEvol_4,
 	EStateEvol_5,
 };
+enum EStateMenu
+{
+	EStateMenu_principale = 1,
+	EStateMenu_tuto,
+	EStateMenu_Ingame,
+	EStateMenu_4,
+	EStateMenu_5,
+};
+
 struct TState
 {
 	EStateEvolution m_tEvolution;
 };
+struct TMenu
+{
+	EStateMenu m_tMenu;
+};
+
 struct TSprite
 {
 	TGfxVec2 tPosition;
@@ -113,6 +130,7 @@ struct TSound
 };
 
 TState g_tEvol[g_iNumberPlayer];
+TMenu g_tMenu;
 TSprite g_tPlayer[g_iNumberPlayer];
 TEnnemy g_tEnnemy[g_iNumberEnnemy];
 TEnnemy g_tGlow[g_iNumberGlow];
