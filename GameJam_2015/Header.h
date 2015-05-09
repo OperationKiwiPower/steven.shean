@@ -92,6 +92,9 @@ struct TTexture
 	TGfxTexture * pTexture_Ennemy;
 	TGfxTexture * pTexture_Glow;
 	TGfxTexture * pTexture_Shield;
+	TGfxTexture * pTexture_Text;
+	TGfxTexture * pTexture_BackG;
+
 };
 struct TText
 {
@@ -127,6 +130,13 @@ struct TSound
 	TGfxSound * m_BigShoot;
 	TGfxSound * m_Schield;
 	TGfxSound * m_Evol;
+};
+struct TMenu_Principal
+{
+	TGfxSprite * pSpritePlay;
+	TGfxSprite * pSpriteTutoriel;
+	TGfxSprite * pSpriteExit;
+
 };
 
 TState g_tEvol[g_iNumberPlayer];

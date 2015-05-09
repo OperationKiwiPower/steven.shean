@@ -33,7 +33,8 @@ void createSprite()
 	g_tTexture.pTexture_Ammo = CreateTexture("ammo.tga");
 	g_tTexture.pTexture_Ennemy = CreateTexture("point.tga");
 	g_tTexture.pTexture_Glow = CreateTexture("glow.tga");
-	g_tTexture.pTexture_Shield= CreateTexture("glow.tga");
+	g_tTexture.pTexture_Shield = CreateTexture("schield.tga");
+	//g_tTexture.pTexture_Shield = CreateTexture("glow.tga");
 
 	for (int i = 0; i < g_iNumberGlow; ++i)
 	{
@@ -56,7 +57,7 @@ void createSprite()
 	for (int i = 0; i < g_iNumberPlayer; ++i)
 	{
 		g_tPlayer[i].pSpriteSchield = CreateFairy(g_tTexture.pTexture_Shield, g_tPlayer[i].tPosition, 0, 0, 256, 0.5f);
-		GfxSpriteSetColor(g_tPlayer[i].pSpriteSchield, GfxColor(150, 150, 255, 255));
+		//GfxSpriteSetColor(g_tPlayer[i].pSpriteSchield, GfxColor(150, 150, 255, 255));
 		g_tText.pScore[i] = GfxTextSpriteCreate();
 		g_tPlayer[i].tAmmoDepl[i] = TGfxVec2(0, 0);
 		g_tPlayer[i].tAmmoPositionInitial[g_tPlayer[i].iAmmoNow] = TGfxVec2(0, 0);
@@ -234,7 +235,7 @@ void Controller(const int iPlayer)
 	float fJoystickRightX = GfxInputGetPadStickRightX(iPlayer);
 	float fJoystickRightY = (-1 * GfxInputGetPadStickRightY(iPlayer));
 
-	if (GfxInputIsJustPressed(EGfxInputID_360PadY) && (GfxInputGetPadTriggerRight != 0))
+	if (GfxInputIsPressed(EGfxInputID_360PadX, iPlayer) && (GfxInputIsJustPressed(EGfxInputID_360PadY, iPlayer)))
 	{
 		if (g_bGodMod == true)
 		{
@@ -284,7 +285,6 @@ void Controller(const int iPlayer)
 	{
 		if (GfxInputIsJustPressed(EGfxInputID_360PadShoulderR, iPlayer) && (g_tPlayer[iPlayer].bActifSchield == false))
 		{
-
 			GfxSoundPlay(g_tSound.m_Shoot);
 			g_tPlayer[iPlayer].tAmmoPositionInitial[g_tPlayer[iPlayer].iAmmoNow] = g_tPlayer[iPlayer].tPosition;
 			g_tPlayer[iPlayer].tAmmoDepl[g_tPlayer[iPlayer].iAmmoNow] = g_tDirection[iPlayer];
@@ -498,6 +498,7 @@ void setScoring()
 
 void MenuUpdate()
 {
+
 
 }
 void TutoUpdate()
