@@ -10,10 +10,10 @@ TSprite g_tEnnemi[g_iNumberEnnemy];
 
 void Initialize()
 {
-	g_tPlayer.pSprite = SC_CreateSprite(g_tPlayer);
+	g_tPlayer.pSprite = SC_CreateSprite(g_tPlayer,12,12,16,3);
 	for (int i = 0; i < g_iNumberEnnemy; i++)
 	{
-		g_tEnnemi[i].pSprite = SC_CreateSprite(g_tEnnemi[i]);
+		g_tEnnemi[i].pSprite = SC_CreateSprite(g_tEnnemi[i],5, 5, 16, 3);
 	}
 }
 void Update()
@@ -23,7 +23,7 @@ void Update()
 void Render()
 {
 	GfxClear(EGfxColor_Black);
-
+	GfxSpriteRender(g_tPlayer.pSprite);
 }
 
 void GfxMain(int, char *[])
