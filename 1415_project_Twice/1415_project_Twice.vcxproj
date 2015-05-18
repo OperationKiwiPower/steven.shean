@@ -116,7 +116,8 @@
     </ClCompile>
     <ClCompile Include="..\..\main\lib\flib\flib_vec2.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="SC_Sprite-texture-image.cpp" />
+    <ClCompile Include="SC_Sprite.cpp" />
+    <ClCompile Include="SH_Texture_image.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SC_Sprite-texture-image.h" />

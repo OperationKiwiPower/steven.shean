@@ -13,7 +13,7 @@ void Initialize()
 	g_tPlayer.pSprite = SC_CreateSprite(g_tPlayer);
 	for (int i = 0; i < g_iNumberEnnemy; i++)
 	{
-		g_tEnnemi[1].pSprite = SC_CreateSprite(g_tEnnemi[i]);
+		g_tEnnemi[i].pSprite = SC_CreateSprite(g_tEnnemi[i]);
 	}
 }
 void Update()
