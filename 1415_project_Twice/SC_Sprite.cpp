@@ -4,6 +4,7 @@
 
 TGfxSprite * SC_CreateSprite(TSprite & tSprite)
 {
+	tSprite.pTexture = Create_Texture(tSprite);
 	tSprite.pSprite = GfxSpriteCreate(tSprite.pTexture);
 
 
