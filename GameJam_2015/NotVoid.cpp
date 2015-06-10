@@ -67,6 +67,8 @@ TGfxSprite * CreateBackground(TGfxTexture * pTexture, const int iSizeX, const in
 {
 	TGfxSprite * pSprite = GfxSpriteCreate(pTexture);
 	GfxSpriteSetFilteringEnabled(pSprite, false);
+	iSizeX;
+	iSizeY;
 	GfxSpriteSetScale(pSprite, fRatio, fRatio);
 
 	return pSprite;

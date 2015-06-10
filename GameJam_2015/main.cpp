@@ -46,6 +46,7 @@ void createSprite()
 	g_tTexture.pTexture_Glow = CreateTexture("glow.tga");
 	g_tTexture.pTexture_Shield = CreateTexture("shield.tga");
 	g_tTexture.pTexture_Text = CreateTexture("text_menu.tga");
+	g_tTexture.pTexture_TItle= CreateTexture("title.tga");
 	g_tTexture.pTexture_TextGlow = CreateTexture("text_menu.tga");
 	g_tTexture.pTexture_BackG = CreateTexture("background_menu.tga");
 
@@ -58,11 +59,11 @@ void createSprite()
 	g_tMenuSprite[0].pSpritePlay = CreateText(g_tTexture.pTexture_Text, TGfxVec2(0, 0), 0, 0, 128, 1);
 	g_tMenuSprite[0].pSpriteExit = CreateText(g_tTexture.pTexture_Text, TGfxVec2(0, 0), 0, 128, 128, 1);
 	g_tMenuSprite[0].pSpriteTutoriel = CreateText(g_tTexture.pTexture_Text, TGfxVec2(0, 0), 0, 256, 128, 1);
-	g_tMenuSprite[0].pSpriteTitle = CreateText(g_tTexture.pTexture_Text, TGfxVec2(0, 0), 0, 384, 128, 1);
+	g_tMenuSprite[0].pSpriteTitle = CreateText(g_tTexture.pTexture_TItle, TGfxVec2(0, 0), 0, 0, 1024, 0.5f);
 	g_tMenuSprite[1].pSpritePlay = CreateText(g_tTexture.pTexture_Text, TGfxVec2(0, 0), 256, 0, 128, 1);
 	g_tMenuSprite[1].pSpriteExit = CreateText(g_tTexture.pTexture_Text, TGfxVec2(0, 0), 256, 128, 128, 1);
 	g_tMenuSprite[1].pSpriteTutoriel = CreateText(g_tTexture.pTexture_Text, TGfxVec2(0, 0), 256, 256, 128, 1);
-	g_tMenuSprite[1].pSpriteTitle = CreateText(g_tTexture.pTexture_Text, TGfxVec2(0, 0), 256, 384, 128, 1);
+//	g_tMenuSprite[1].pSpriteTitle = CreateText(g_tTexture.pTexture_Text, TGfxVec2(0, 0), 256, 384, 128, 1);
 
 	g_tMenuSprite[0].pSpriteBackground = CreateBackground(g_tTexture.pTexture_BackG, 1600, 900, 2);
 
@@ -72,7 +73,8 @@ void createSprite()
 		GfxSpriteSetPosition(g_tMenuSprite[i].pSpritePlay, float(g_tDisplay.X.iQuart) / 2, float(g_tDisplay.Y.iQuart));
 		GfxSpriteSetPosition(g_tMenuSprite[i].pSpriteExit, float(g_tDisplay.X.iQuart) / 2, float(g_tDisplay.Y.iHalf));
 		GfxSpriteSetPosition(g_tMenuSprite[i].pSpriteTutoriel, float(g_tDisplay.X.iQuart) / 2, float(g_tDisplay.Y.iTriQuart));
-		GfxSpriteSetPosition(g_tMenuSprite[i].pSpriteTitle, float(g_tDisplay.X.iHalf), float(g_tDisplay.Y.iQuart));
+		GfxSpriteSetPosition(g_tMenuSprite[0].pSpriteTitle, float(g_tDisplay.X.iTriQuart), float(g_tDisplay.Y.iHalf)-64);
+		GfxSpriteSetFilteringEnabled(g_tMenuSprite[0].pSpriteTitle, true);
 	}
 	for (int i = 0; i < g_iNumberTutotPage; i++)
 	{
@@ -413,7 +415,8 @@ void SpriteVsEvol(const int iPlayer)
 {
 	if (GfxInputIsJustPressed(EGfxInputID_360PadB, iPlayer))
 	{
-		g_tPlayer[iPlayer].iScore += 100;
+		//CHEAT
+	//	g_tPlayer[iPlayer].iScore += 100;
 	}
 	for (int j = 0; j < g_iNumberAmmo; j++)
 	{
@@ -573,6 +576,8 @@ void setScoring()
 void MenuUpdate()
 {
 	//controller
+
+
 	if (GfxInputIsJustPressed(EGfxInputID_360PadUp) && g_iWitchIsChoose > 1)
 	{
 		g_iWitchIsChoose--;
@@ -647,6 +652,8 @@ void TutoUpdate()
 }
 void IngameUpdate()
 {
+	g_bPlayAmb = false;
+
 	setScoring();
 	clock();
 	MovePoint();
@@ -655,7 +662,7 @@ void IngameUpdate()
 
 	if (checkAllPlayerWin() == true)
 	{
-//		g_tMenu.m_tMenu = EStateMenu_principale;
+		g_tMenu.m_tMenu = EStateMenu_principale;
 	}
 	if (GfxInputIsJustPressed(EGfxInputID_360PadStart))
 	{
@@ -801,10 +808,11 @@ void Initialize()
 	g_tSound.m_BigShoot = CreateSound("Wave_4.wav");
 	//g_tSound.m_ = CreateSound("Wave_5.wav");
 	g_tSound.m_Evol = CreateSound("Wave_6.wav");
+//	g_tSound.m_Ambience = CreateSound("menu100.wav");
 
 	for (int i = 0; i < g_iNumberPlayer; i++)
 	{
-		g_tWinnerPos[i] = TGfxVec2(g_tDisplay.X.iFull - 50, g_tDisplay.Y.iQuart *(i+1) - 64);
+		g_tWinnerPos[i] = TGfxVec2(float(g_tDisplay.X.iFull - 50), float(g_tDisplay.Y.iQuart *(i + 1) - 64));
 	}
 
 	g_pTextGod = GfxTextSpriteCreate();
@@ -882,5 +890,6 @@ void Render()
 void GfxMain(int, char *[])
 {
 	GfxCallbacks(Initialize, Update, Render);
-	GfxDefaultResolution(1500, 700);
+	GfxDefaultResolution(1280,1024);
+
 }

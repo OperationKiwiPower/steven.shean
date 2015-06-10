@@ -16,6 +16,8 @@ int g_iNumberTuto= 0;
 
 bool g_bGodMod = false;
 bool g_bSound = true;
+bool g_bPlayAmb= false;
+
 TGfxSprite * g_pTextGod;
 TGfxSprite * g_pTextMusique;
 
@@ -99,6 +101,7 @@ struct TTexture
 	TGfxTexture * pTexture_Glow;
 	TGfxTexture * pTexture_Shield;
 	TGfxTexture * pTexture_Text;
+	TGfxTexture * pTexture_TItle;
 	TGfxTexture * pTexture_TextGlow;
 	TGfxTexture * pTexture_BackG;
 	TGfxTexture * pTexture_Tuto[g_iNumberTutotPage];
@@ -134,6 +137,7 @@ struct TClock
 };
 struct TSound
 {
+	TGfxSound * m_Ambience;
 	TGfxSound * m_Shoot;
 	TGfxSound * m_BigShoot;
 	TGfxSound * m_Schield;
