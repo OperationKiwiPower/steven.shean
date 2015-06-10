@@ -28,8 +28,11 @@ struct TDisplay
 TTime g_tTime;
 TSegmentTime g_TSgementTime;
 TDisplay g_tDisplay;
-
+unsigned int g_iColor;
 int iMaxTimeBetween = 1;// number heure;
+TGfxSound * g_pSound;
+int g_iCompt = 0;
+bool g_bIsOver = false;
 
 int SC_GetTime()
 {
@@ -67,23 +70,46 @@ void Initialize()
 	g_tTime.pTextSprite = GfxTextSpriteCreate();
 	GfxSpriteSetFilteringEnabled(g_tTime.pTextSprite, false);
 	SC_GetDisplaySize();
-
+	g_iColor = EGfxColor_Black;
+	g_pSound = GfxSoundLoad("Alarme.wav");
 }
 void Update()
 {
+	g_iCompt++;
 	g_tTime.iRestTime = SC_GetTime();
 	SC_SegmentTime(g_tTime.iRestTime);
+	if (g_tTime.iRestTime <= 0)g_iColor = true;
 
 	GfxTextSpritePrintf(g_tTime.pTextSprite,
 				"Il reste: %i h %i m %i s",
 				int(g_TSgementTime.iHour), 
 				int(g_TSgementTime.iMinute), 
 				int(g_TSgementTime.iSecond));
-
+	if (GfxInputIsJustPressed(EGfxInputID_MouseLeft))
+	{
+		g_iColor = EGfxColor_Black;
+		g_tTime.iFirst = GfxTimeGetMilliseconds();
+		g_bIsOver = false;
+	}
+	
+	if (g_iCompt % 25 == 0 && g_bIsOver == true)
+	{
+		GfxSoundPlay(g_pSound);
+		if (g_iColor == EGfxColor_Blue)
+		{
+			g_iColor = EGfxColor_Red;
+		}
+		else
+		{
+			g_iColor = EGfxColor_Blue;
+		}
+	}
+	
 }
 void Render()
 {
-	GfxClear(EGfxColor_Black);
+	GfxClear(g_iColor);
+
 	GfxTextSpriteRender(g_tTime.pTextSprite, float(g_tDisplay.X.half), float (g_tDisplay.Y.half), EGfxColor_White, 2.0f, true, true);
 }
 
