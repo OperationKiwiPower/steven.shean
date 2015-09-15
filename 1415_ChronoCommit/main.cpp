@@ -78,7 +78,7 @@ void Update()
 	g_iCompt++;
 	g_tTime.iRestTime = SC_GetTime();
 	SC_SegmentTime(g_tTime.iRestTime);
-	if (g_tTime.iRestTime <= 0)g_bIsOver = true;
+	if (g_tTime.iRestTime <= 0)g_iColor = true;
 
 	GfxTextSpritePrintf(g_tTime.pTextSprite,
 				"Il reste: %i h %i m %i s",
