@@ -5,17 +5,25 @@ const int g_iNumberPlayer = 4;
 const int g_iNumberAmmo = 200;
 const int g_iNumberEnnemy = 55;
 const int g_iNumberGlow = 10;
+const int g_iNumberTutotPage = 5;
 
 int g_iWitchChange = 0;
+int g_iWitchIsChoose = 1;
 int g_iNumberPlayerInGame = 0;
 int g_iNumberEnnemyRender = 0;
 int g_iCounter = 0;
+int g_iNumberTuto= 0;
 
 bool g_bGodMod = false;
-TGfxSprite* g_pTextGod;
+bool g_bSound = true;
+bool g_bPlayAmb= false;
+
+TGfxSprite * g_pTextGod;
+TGfxSprite * g_pTextMusique;
 
 TGfxVec2 g_tMouvement[g_iNumberPlayer];
 TGfxVec2 g_tDirection[g_iNumberPlayer];
+TGfxVec2 g_tWinnerPos[g_iNumberPlayer];
 
 enum EStateEvolution
 {
@@ -93,7 +101,10 @@ struct TTexture
 	TGfxTexture * pTexture_Glow;
 	TGfxTexture * pTexture_Shield;
 	TGfxTexture * pTexture_Text;
+	TGfxTexture * pTexture_TItle;
+	TGfxTexture * pTexture_TextGlow;
 	TGfxTexture * pTexture_BackG;
+	TGfxTexture * pTexture_Tuto[g_iNumberTutotPage];
 
 };
 struct TText
@@ -126,6 +137,7 @@ struct TClock
 };
 struct TSound
 {
+	TGfxSound * m_Ambience;
 	TGfxSound * m_Shoot;
 	TGfxSound * m_BigShoot;
 	TGfxSound * m_Schield;
@@ -136,13 +148,21 @@ struct TMenu_Principal
 	TGfxSprite * pSpritePlay;
 	TGfxSprite * pSpriteTutoriel;
 	TGfxSprite * pSpriteExit;
-
+	TGfxSprite * pSpriteBackground;
+	TGfxSprite * pSpriteTitle;
+};
+struct TTuto
+{
+	TGfxSprite * pSprite;
 };
 
 TState g_tEvol[g_iNumberPlayer];
 TMenu g_tMenu;
+TMenu_Principal g_tMenuSprite[2];
+
 TSprite g_tPlayer[g_iNumberPlayer];
 TEnnemy g_tEnnemy[g_iNumberEnnemy];
+TTuto g_tTuto[g_iNumberTutotPage];
 TEnnemy g_tGlow[g_iNumberGlow];
 TTexture g_tTexture;
 TText g_tText;

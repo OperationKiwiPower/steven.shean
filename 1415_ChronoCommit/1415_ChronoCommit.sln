@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{4E679E66-ACA5-47DA-B147-B4B0A889D08F}") = "1415_ChronoCommit", "1415_ChronoCommit.vcxproj", "{0C89F687-71C5-4034-A833-2379A060A2A1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Android|Win32 = Android|Win32
+		Debug|Win32 = Debug|Win32
+		PS3|Win32 = PS3|Win32
+		PSP|Win32 = PSP|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0C89F687-71C5-4034-A833-2379A060A2A1}.Android|Win32.ActiveCfg = Android|Win32
+		{0C89F687-71C5-4034-A833-2379A060A2A1}.Android|Win32.Build.0 = Android|Win32
+		{0C89F687-71C5-4034-A833-2379A060A2A1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0C89F687-71C5-4034-A833-2379A060A2A1}.Debug|Win32.Build.0 = Debug|Win32
+		{0C89F687-71C5-4034-A833-2379A060A2A1}.PS3|Win32.ActiveCfg = PS3|Win32
+		{0C89F687-71C5-4034-A833-2379A060A2A1}.PS3|Win32.Build.0 = PS3|Win32
+		{0C89F687-71C5-4034-A833-2379A060A2A1}.PSP|Win32.ActiveCfg = PSP|Win32
+		{0C89F687-71C5-4034-A833-2379A060A2A1}.PSP|Win32.Build.0 = PSP|Win32
+		{0C89F687-71C5-4034-A833-2379A060A2A1}.Release|Win32.ActiveCfg = Release|Win32
+		{0C89F687-71C5-4034-A833-2379A060A2A1}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

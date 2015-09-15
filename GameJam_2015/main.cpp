@@ -16,6 +16,17 @@ bool checkAllDead()
 
 	return false;
 }
+bool checkAllPlayerWin()
+{
+	for (int i = 0; i < g_iNumberPlayerInGame; i++)
+	{
+		if (g_tEvol[i].m_tEvolution != EStateEvol_5)
+		{
+			return false;
+		}
+	}
+	return true;
+}
 
 void clock()
 {
@@ -33,9 +44,45 @@ void createSprite()
 	g_tTexture.pTexture_Ammo = CreateTexture("ammo.tga");
 	g_tTexture.pTexture_Ennemy = CreateTexture("point.tga");
 	g_tTexture.pTexture_Glow = CreateTexture("glow.tga");
-	g_tTexture.pTexture_Shield = CreateTexture("schield.tga");
-	//g_tTexture.pTexture_Shield = CreateTexture("glow.tga");
+	g_tTexture.pTexture_Shield = CreateTexture("shield.tga");
+	g_tTexture.pTexture_Text = CreateTexture("text_menu.tga");
+	g_tTexture.pTexture_TItle= CreateTexture("title.tga");
+	g_tTexture.pTexture_TextGlow = CreateTexture("text_menu.tga");
+	g_tTexture.pTexture_BackG = CreateTexture("background_menu.tga");
 
+	g_tTexture.pTexture_Tuto[0] = CreateTexture("tuto1.tga");
+	g_tTexture.pTexture_Tuto[1] = CreateTexture("tuto2.tga");
+	g_tTexture.pTexture_Tuto[2] = CreateTexture("tuto3.tga");
+	g_tTexture.pTexture_Tuto[3] = CreateTexture("tuto4.tga");
+	g_tTexture.pTexture_Tuto[4] = CreateTexture("tuto5.tga");
+
+	g_tMenuSprite[0].pSpritePlay = CreateText(g_tTexture.pTexture_Text, TGfxVec2(0, 0), 0, 0, 128, 1);
+	g_tMenuSprite[0].pSpriteExit = CreateText(g_tTexture.pTexture_Text, TGfxVec2(0, 0), 0, 128, 128, 1);
+	g_tMenuSprite[0].pSpriteTutoriel = CreateText(g_tTexture.pTexture_Text, TGfxVec2(0, 0), 0, 256, 128, 1);
+	g_tMenuSprite[0].pSpriteTitle = CreateText(g_tTexture.pTexture_TItle, TGfxVec2(0, 0), 0, 0, 1024, 0.5f);
+	g_tMenuSprite[1].pSpritePlay = CreateText(g_tTexture.pTexture_Text, TGfxVec2(0, 0), 256, 0, 128, 1);
+	g_tMenuSprite[1].pSpriteExit = CreateText(g_tTexture.pTexture_Text, TGfxVec2(0, 0), 256, 128, 128, 1);
+	g_tMenuSprite[1].pSpriteTutoriel = CreateText(g_tTexture.pTexture_Text, TGfxVec2(0, 0), 256, 256, 128, 1);
+//	g_tMenuSprite[1].pSpriteTitle = CreateText(g_tTexture.pTexture_Text, TGfxVec2(0, 0), 256, 384, 128, 1);
+
+	g_tMenuSprite[0].pSpriteBackground = CreateBackground(g_tTexture.pTexture_BackG, 1600, 900, 2);
+
+	for (int i = 0; i < 2; i++)
+	{
+		GfxSpriteSetPosition(g_tMenuSprite[0].pSpriteBackground, 0, 0);
+		GfxSpriteSetPosition(g_tMenuSprite[i].pSpritePlay, float(g_tDisplay.X.iQuart) / 2, float(g_tDisplay.Y.iQuart));
+		GfxSpriteSetPosition(g_tMenuSprite[i].pSpriteExit, float(g_tDisplay.X.iQuart) / 2, float(g_tDisplay.Y.iHalf));
+		GfxSpriteSetPosition(g_tMenuSprite[i].pSpriteTutoriel, float(g_tDisplay.X.iQuart) / 2, float(g_tDisplay.Y.iTriQuart));
+		GfxSpriteSetPosition(g_tMenuSprite[0].pSpriteTitle, float(g_tDisplay.X.iTriQuart), float(g_tDisplay.Y.iHalf)-64);
+		GfxSpriteSetFilteringEnabled(g_tMenuSprite[0].pSpriteTitle, true);
+	}
+	for (int i = 0; i < g_iNumberTutotPage; i++)
+	{
+		g_tTuto[i].pSprite = CreateBackground(g_tTexture.pTexture_Tuto[i],1280,1024,1);
+		GfxSpriteSetScale(g_tTuto[i].pSprite, (float(g_tDisplay.Y.iFull) / GfxSpriteGetSizeY(g_tTuto[i].pSprite)), (float(g_tDisplay.Y.iFull) / GfxSpriteGetSizeY(g_tTuto[i].pSprite)));
+		GfxSpriteSetPivot(g_tTuto[i].pSprite, float(GfxSpriteGetSizeX(g_tTuto[i].pSprite) / 2), float(GfxSpriteGetSizeY(g_tTuto[i].pSprite) / 2));
+		GfxSpriteSetPosition(g_tTuto[i].pSprite, float(g_tDisplay.X.iHalf), float(g_tDisplay.Y.iHalf));
+	}
 	for (int i = 0; i < g_iNumberGlow; ++i)
 	{
 		g_tGlow[i].pSprite[0] = CreateFairy(g_tTexture.pTexture_Glow, g_tGlow[i].tPosition, 0, 0, 256, 2);
@@ -56,13 +103,13 @@ void createSprite()
 	}
 	for (int i = 0; i < g_iNumberPlayer; ++i)
 	{
-		g_tPlayer[i].pSpriteSchield = CreateFairy(g_tTexture.pTexture_Shield, g_tPlayer[i].tPosition, 0, 0, 256, 0.5f);
+		g_tPlayer[i].pSpriteSchield = CreateFairy(g_tTexture.pTexture_Shield, g_tPlayer[i].tPosition, 0, 0, 64, 1);
 		//GfxSpriteSetColor(g_tPlayer[i].pSpriteSchield, GfxColor(150, 150, 255, 255));
 		g_tText.pScore[i] = GfxTextSpriteCreate();
 		g_tPlayer[i].tAmmoDepl[i] = TGfxVec2(0, 0);
 		g_tPlayer[i].tAmmoPositionInitial[g_tPlayer[i].iAmmoNow] = TGfxVec2(0, 0);
 		g_tEvol[i].m_tEvolution = EStateEvol_1;
-		g_tMenu.m_tMenu= EStateMenu_Ingame;
+		g_tMenu.m_tMenu= EStateMenu_principale;
 		g_tPlayer[i].tPosition.x = g_tPlayer[i].tPositionInitial.x;
 		g_tPlayer[i].tPosition.y = g_tPlayer[i].tPositionInitial.y;
 		g_tPlayer[i].pSpriteEvol_1[0] = CreateFairy(g_tTexture.pTexture_16, g_tPlayer[i].tPosition, 0, i * 16, 16, 1);
@@ -256,7 +303,7 @@ void Controller(const int iPlayer)
 	float fTrigger = GfxInputGetPadTriggerLeft(iPlayer);
 	if (fTrigger > 0)
 	{
-		if (g_tPlayer[iPlayer].bActifSchield == false)
+		if (g_tPlayer[iPlayer].bActifSchield == false && g_bSound == true)
 		{
 			GfxSoundPlay(g_tSound.m_Schield);
 		}
@@ -275,7 +322,10 @@ void Controller(const int iPlayer)
 		(g_tPlayer[iPlayer].bActifSchield == false)&&
 		(g_tPlayer[iPlayer].iScore >= 5))
 	{
-		GfxSoundPlay(g_tSound.m_BigShoot);
+		if (g_bSound == true)
+		{
+			GfxSoundPlay(g_tSound.m_BigShoot);
+		}
 		g_tPlayer[iPlayer].tBigAmmoPositionInitial = g_tPlayer[iPlayer].tPosition;
 		g_tPlayer[iPlayer].tBigAmmoDepl = g_tDirection[iPlayer];
 		g_tPlayer[iPlayer].iScore -= 5;
@@ -285,7 +335,10 @@ void Controller(const int iPlayer)
 	{
 		if (GfxInputIsJustPressed(EGfxInputID_360PadShoulderR, iPlayer) && (g_tPlayer[iPlayer].bActifSchield == false))
 		{
-			GfxSoundPlay(g_tSound.m_Shoot);
+			if (g_bSound == true)
+			{
+				GfxSoundPlay(g_tSound.m_Shoot);
+			}
 			g_tPlayer[iPlayer].tAmmoPositionInitial[g_tPlayer[iPlayer].iAmmoNow] = g_tPlayer[iPlayer].tPosition;
 			g_tPlayer[iPlayer].tAmmoDepl[g_tPlayer[iPlayer].iAmmoNow] = g_tDirection[iPlayer];
 			g_tPlayer[iPlayer].iAmmoNow++;
@@ -301,7 +354,7 @@ void Controller(const int iPlayer)
 		if (GfxInputIsPressed(EGfxInputID_360PadShoulderR, iPlayer) && (g_tPlayer[iPlayer].bActifSchield == false))
 		{
 
-			if (g_iCounter % 5 == 0)
+			if (g_iCounter % 5 == 0 && g_bSound == true)
 			{
 			GfxSoundPlay(g_tSound.m_Shoot);
 			}
@@ -360,9 +413,10 @@ void Controller(const int iPlayer)
 }
 void SpriteVsEvol(const int iPlayer)
 {
-	if (GfxInputIsPressed(EGfxInputID_360PadBack, iPlayer))
+	if (GfxInputIsJustPressed(EGfxInputID_360PadB, iPlayer))
 	{
-		g_tPlayer[iPlayer].iScore += 5;
+		//CHEAT
+	//	g_tPlayer[iPlayer].iScore += 100;
 	}
 	for (int j = 0; j < g_iNumberAmmo; j++)
 	{
@@ -382,8 +436,10 @@ void SpriteVsEvol(const int iPlayer)
 		GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteEvol_1[1], g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
 		if (g_tPlayer[iPlayer].iScore >= 50)
 		{
-			GfxSoundPlay(g_tSound.m_Evol);
-
+			if (g_bSound == true)
+			{
+				GfxSoundPlay(g_tSound.m_Evol);
+			}
 			g_tEvol[iPlayer].m_tEvolution = EStateEvol_2;
 			g_tPlayer[iPlayer].iScore -= 50;
 			g_tPlayer[iPlayer].fRatio *= 2;
@@ -391,6 +447,7 @@ void SpriteVsEvol(const int iPlayer)
 			for (int i = 0; i < g_iNumberAmmo; i++)
 			{
 				GfxSpriteSetScale(g_tPlayer[iPlayer].pSpriteAmmo[i], 1.5f, 1.5f);
+				GfxSpriteSetScale(g_tPlayer[iPlayer].pSpriteSchield, 2, 2);
 			}
 		}
 		break;
@@ -399,14 +456,17 @@ void SpriteVsEvol(const int iPlayer)
 		GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteEvol_2[1], g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
 		if ( g_tPlayer[iPlayer].iScore >= 100)
 		{
-			GfxSoundPlay(g_tSound.m_Evol);
-
+			if (g_bSound == true)
+			{
+				GfxSoundPlay(g_tSound.m_Evol);
+			}
 			g_tEvol[iPlayer].m_tEvolution = EStateEvol_3;
 			g_tPlayer[iPlayer].iScore -= 100;
 			g_tPlayer[iPlayer].fRatio *= 2;
 			for (int i = 0; i < g_iNumberAmmo; i++)
 			{
 				GfxSpriteSetScale(g_tPlayer[iPlayer].pSpriteAmmo[i], 2, 2);
+				GfxSpriteSetScale(g_tPlayer[iPlayer].pSpriteSchield, 3, 3);
 			}
 		}
 		break;
@@ -415,14 +475,17 @@ void SpriteVsEvol(const int iPlayer)
 		GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteEvol_3[1], g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
 		if (g_tPlayer[iPlayer].iScore >= 150)
 		{
-			GfxSoundPlay(g_tSound.m_Evol);
-
+			if (g_bSound == true)
+			{
+				GfxSoundPlay(g_tSound.m_Evol);
+			}
 			g_tEvol[iPlayer].m_tEvolution = EStateEvol_4;
 			g_tPlayer[iPlayer].iScore -= 150;
 			g_tPlayer[iPlayer].fRatio *= 2;
 			for (int i = 0; i < g_iNumberAmmo; i++)
 			{
 				GfxSpriteSetScale(g_tPlayer[iPlayer].pSpriteAmmo[i], 2.5f, 2.5f);
+				GfxSpriteSetScale(g_tPlayer[iPlayer].pSpriteSchield, 4, 4);
 			}
 		}
 		break;
@@ -431,18 +494,32 @@ void SpriteVsEvol(const int iPlayer)
 		GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteEvol_4[1], g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
 		if (g_tPlayer[iPlayer].iScore >= 200)
 		{
-			GfxSoundPlay(g_tSound.m_Evol);
-
+			if (g_bSound == true)
+			{
+				GfxSoundPlay(g_tSound.m_Evol);
+			}
 			g_tEvol[iPlayer].m_tEvolution = EStateEvol_5;
 			g_tPlayer[iPlayer].iScore -= 200;
 			g_tPlayer[iPlayer].fRatio *= 2;
 			for (int i = 0; i < g_iNumberAmmo; i++)
 			{
 				GfxSpriteSetScale(g_tPlayer[iPlayer].pSpriteAmmo[i], 3, 3);
+				GfxSpriteSetScale(g_tPlayer[iPlayer].pSpriteSchield, 10, 10);
 			}
 		}
 		break;
 	case EStateEvol_5:
+		if (g_tPlayer[iPlayer].tPosition.x >= g_tWinnerPos[iPlayer].x - 10 &&
+			g_tPlayer[iPlayer].tPosition.x <= g_tWinnerPos[iPlayer].x + 10 &&
+			g_tPlayer[iPlayer].tPosition.y >= g_tWinnerPos[iPlayer].y - 10 &&
+			g_tPlayer[iPlayer].tPosition.y <= g_tWinnerPos[iPlayer].y + 10)
+		{
+
+		}
+		else
+		{
+		g_tPlayer[iPlayer].tPosition += TGfxVec2(g_tWinnerPos[iPlayer] - g_tPlayer[iPlayer].tPosition).Normalize()* 5;
+		}
 		GfxSpriteSetPosition(g_tPlayer[iPlayer].pSpriteEvol_5[0], g_tPlayer[iPlayer].tPosition.x, g_tPlayer[iPlayer].tPosition.y);
 		/*if (g_tPlayer[iPlayer].iScore >= 250)
 		{
@@ -498,22 +575,98 @@ void setScoring()
 
 void MenuUpdate()
 {
+	//controller
+
+
+	if (GfxInputIsJustPressed(EGfxInputID_360PadUp) && g_iWitchIsChoose > 1)
+	{
+		g_iWitchIsChoose--;
+	}
+	if (GfxInputIsJustPressed(EGfxInputID_360PadDown) && g_iWitchIsChoose < 3)
+	{
+		g_iWitchIsChoose++;
+	}
+	//mousse
+	if (GfxInputIsJustPressed(EGfxInputID_MouseLeft))
+	{
+		if ((GfxGetCurrentMouseX() >= (g_tDisplay.X.iQuart / 3)) &&
+			(GfxGetCurrentMouseX() <= (g_tDisplay.X.iQuart / 3) + 256) &&
+			(GfxGetCurrentMouseY() >= (g_tDisplay.Y.iQuart / 2)) &&
+			(GfxGetCurrentMouseY() <= (g_tDisplay.Y.iQuart / 2) + 128))
+		{
+			g_tMenu.m_tMenu = EStateMenu_Ingame;
+		}
+		if ((GfxGetCurrentMouseX() >= (g_tDisplay.X.iQuart / 3)) &&
+			(GfxGetCurrentMouseX() <= (g_tDisplay.X.iQuart / 3) + 256) &&
+			(GfxGetCurrentMouseY() >= (g_tDisplay.Y.iHalf)) &&
+			(GfxGetCurrentMouseY() <= (g_tDisplay.Y.iHalf) + 128))
+		{
+			g_tMenu.m_tMenu = EStateMenu_tuto;
+		}
+		if ((GfxGetCurrentMouseX() >= (g_tDisplay.X.iQuart / 3)) &&
+			(GfxGetCurrentMouseX() <= (g_tDisplay.X.iQuart / 3) + 256) &&
+			(GfxGetCurrentMouseY() >= (g_tDisplay.Y.iTriQuart)) &&
+			(GfxGetCurrentMouseY() <= (g_tDisplay.Y.iTriQuart) + 128))
+		{
+			GfxExitRequest();
+		}
+	}
+	if (g_iWitchIsChoose == 1)
+	{
+		if (GfxInputIsJustPressed(EGfxInputID_360PadA))
+		{
+			g_tMenu.m_tMenu = EStateMenu_Ingame;
+		}
+	}
+	if (g_iWitchIsChoose == 2)
+	{
+		if (GfxInputIsJustPressed(EGfxInputID_360PadA))
+		{
+			g_tMenu.m_tMenu = EStateMenu_tuto;
+		}
+	}
+	if (g_iWitchIsChoose == 3)
+	{
+		if (GfxInputIsJustPressed(EGfxInputID_360PadA))
+		{
+			GfxExitRequest();
+		}
+	}
 
 
 }
 void TutoUpdate()
 {
-
+	if (GfxInputIsJustPressed(EGfxInputID_360PadRight) && g_iNumberTuto < (g_iNumberTutotPage-1))
+	{
+		g_iNumberTuto++;
+	}
+	if (GfxInputIsJustPressed(EGfxInputID_360PadLeft) && g_iNumberTuto > 0)
+	{
+		g_iNumberTuto--;
+	}
+	if (GfxInputIsJustPressed(EGfxInputID_360PadStart))
+	{
+		g_tMenu.m_tMenu = EStateMenu_principale;
+	}
 }
 void IngameUpdate()
 {
+	g_bPlayAmb = false;
+
 	setScoring();
 	clock();
 	MovePoint();
 	g_iCounter++;
+	g_iNumberPlayerInGame = CheckPad();
+
+	if (checkAllPlayerWin() == true)
+	{
+		g_tMenu.m_tMenu = EStateMenu_principale;
+	}
 	if (GfxInputIsJustPressed(EGfxInputID_360PadStart))
 	{
-		GfxExitRequest();
+		g_tMenu.m_tMenu = EStateMenu_principale;
 	}
 	for (int i = 0; i < g_iNumberGlow; ++i)
 	{
@@ -558,7 +711,6 @@ void IngameUpdate()
 			g_iNumberEnnemyRender++;
 		}
 	}
-	g_iNumberPlayerInGame = CheckPad();
 	for (int i = 0; i < g_iNumberPlayer; i++)
 	{
 		checkEnnemyCollision(i);
@@ -567,16 +719,45 @@ void IngameUpdate()
 	{
 		Controller(i);
 	}
-
 }
 
 void MenuRender()
 {
+	GfxSpriteRender(g_tMenuSprite[0].pSpriteBackground);
+	GfxSpriteRender(g_tMenuSprite[0].pSpriteTitle);
+
+	if (g_iWitchIsChoose == 1)
+	{
+		GfxSpriteRender(g_tMenuSprite[1].pSpritePlay);
+
+	}
+	else
+	{
+		GfxSpriteRender(g_tMenuSprite[0].pSpritePlay);
+
+	}
+	if (g_iWitchIsChoose == 2)
+	{
+		GfxSpriteRender(g_tMenuSprite[1].pSpriteExit);
+	}
+	else
+	{
+		GfxSpriteRender(g_tMenuSprite[0].pSpriteExit);
+	}
+	if (g_iWitchIsChoose == 3)
+	{
+		GfxSpriteRender(g_tMenuSprite[1].pSpriteTutoriel);
+	}
+	else
+	{
+		GfxSpriteRender(g_tMenuSprite[0].pSpriteTutoriel);
+
+	}
 
 }
 void TutoRender()
 {
-
+	GfxSpriteRender(g_tTuto[g_iNumberTuto].pSprite);
 }
 void IngameRender()
 {
@@ -614,6 +795,7 @@ void IngameRender()
 	{
 		GfxTextSpriteRender(g_pTextGod,float( g_tDisplay.X.iTriQuart), float (GfxSpriteGetSizeY(g_pTextGod)), EGfxColor_White, 3, true, false);
 	}
+
 }
 
 void Initialize()
@@ -626,10 +808,20 @@ void Initialize()
 	g_tSound.m_BigShoot = CreateSound("Wave_4.wav");
 	//g_tSound.m_ = CreateSound("Wave_5.wav");
 	g_tSound.m_Evol = CreateSound("Wave_6.wav");
+//	g_tSound.m_Ambience = CreateSound("menu100.wav");
+
+	for (int i = 0; i < g_iNumberPlayer; i++)
+	{
+		g_tWinnerPos[i] = TGfxVec2(float(g_tDisplay.X.iFull - 50), float(g_tDisplay.Y.iQuart *(i + 1) - 64));
+	}
 
 	g_pTextGod = GfxTextSpriteCreate();
-	GfxTextSpritePrintf(g_pTextGod, "GoodMod Activated");
+	GfxTextSpritePrintf(g_pTextGod, "GodMod Activated");
 	GfxSpriteSetFilteringEnabled(g_pTextGod, false);
+	g_pTextMusique= GfxTextSpriteCreate();
+	GfxTextSpritePrintf(g_pTextMusique, "Musique:on");
+	GfxSpriteSetFilteringEnabled(g_pTextMusique, false);
+
 	for (int i = 0; i < g_iNumberPlayer; ++i)
 	{
 		SetInitialPlayer(i);
@@ -644,6 +836,19 @@ void Initialize()
 }
 void Update()
 {
+	if (GfxInputIsJustPressed(EGfxInputID_360PadBack))
+	{
+		if (g_bSound == true)
+		{
+			g_bSound = false;
+			GfxTextSpritePrintf(g_pTextMusique, "Musique:off");
+		}
+		else
+		{
+			g_bSound = true;
+			GfxTextSpritePrintf(g_pTextMusique, "Musique:on");
+		}
+	}
 	switch (g_tMenu.m_tMenu)
 	{
 	case EStateMenu_principale:
@@ -659,6 +864,7 @@ void Update()
 	default:
 		break;
 	}
+
 }
 void Render()
 {
@@ -678,11 +884,12 @@ void Render()
 	default:
 		break;
 	}
-
+	GfxTextSpriteRender(g_pTextMusique, float(g_tDisplay.X.iTriQuart + GfxSpriteGetSizeX(g_pTextGod)), float(g_tDisplay.Y.iFull - GfxSpriteGetSizeY(g_pTextMusique) * 3), EGfxColor_White, 1, true, false);
 }
 
 void GfxMain(int, char *[])
 {
 	GfxCallbacks(Initialize, Update, Render);
-	GfxDefaultResolution(1500, 700);
+	GfxDefaultResolution(1280,1024);
+
 }

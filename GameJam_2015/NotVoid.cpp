@@ -39,7 +39,7 @@ TGfxSprite * DrawLine(TGfxSprite * pSprite, TGfxVec2 tPosition, TGfxVec2 tDirect
 	return pSprite;
 }
 
-TGfxSprite * CreateFairy(TGfxTexture * pTexture, TGfxVec2 tPosition,const int iTileX,const int iTileY,const int iPixelSize, const float fRatio)
+TGfxSprite * CreateFairy(TGfxTexture * pTexture, TGfxVec2 tPosition, const int iTileX, const int iTileY, const int iPixelSize, const float fRatio)
 {
 	TGfxSprite * pSprite = GfxSpriteCreate(pTexture);
 	GfxSpriteSetCutout(pSprite, iTileX, iTileY, iPixelSize, iPixelSize);
@@ -47,6 +47,29 @@ TGfxSprite * CreateFairy(TGfxTexture * pTexture, TGfxVec2 tPosition,const int iT
 	GfxSpriteSetScale(pSprite, fRatio, fRatio);
 	GfxSpriteSetPivot(pSprite, float(iPixelSize / 2), float(iPixelSize / 2));
 	GfxSpriteSetPosition(pSprite, tPosition.x, tPosition.y);
+
+	return pSprite;
+}
+
+TGfxSprite * CreateText(TGfxTexture * pTexture, TGfxVec2 tPosition, const int iTileX, const int iTileY, const int iPixelSize, const float fRatio)
+{
+	TGfxSprite * pSprite = GfxSpriteCreate(pTexture);
+	GfxSpriteSetCutout(pSprite, iTileX, iTileY, iPixelSize * 2, iPixelSize);
+	GfxSpriteSetFilteringEnabled(pSprite, false);
+	GfxSpriteSetScale(pSprite, fRatio, fRatio);
+	GfxSpriteSetPivot(pSprite, float(iPixelSize / 2), float(iPixelSize / 2));
+	GfxSpriteSetPosition(pSprite, tPosition.x, tPosition.y);
+
+	return pSprite;
+}
+
+TGfxSprite * CreateBackground(TGfxTexture * pTexture, const int iSizeX, const int iSizeY, const float fRatio)
+{
+	TGfxSprite * pSprite = GfxSpriteCreate(pTexture);
+	GfxSpriteSetFilteringEnabled(pSprite, false);
+	iSizeX;
+	iSizeY;
+	GfxSpriteSetScale(pSprite, fRatio, fRatio);
 
 	return pSprite;
 }
